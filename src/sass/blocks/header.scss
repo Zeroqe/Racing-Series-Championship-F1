@@ -1,0 +1,140 @@
+@use "../pxtorem" as *;
+@use "../base/variables" as *;
+
+.ticker {
+    background-color: #111915;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: rem(7) 0;
+    font-size: rem(13);
+    color: #d1fae5;
+
+    &__track {
+        display: inline-flex;
+        gap: rem(48);
+        animation: tickerMove 32s linear infinite;
+
+        &:hover {
+            animation-play-state: paused;
+        }
+    }
+}
+
+@keyframes tickerMove {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(11, 12, 14, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid $border-color;
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: rem(72);
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: rem(12);
+    }
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: rem(10);
+    font-family: $font-display;
+    font-size: rem(24);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: rem(32);
+        height: rem(32);
+        border-radius: rem(6);
+        background-color: $accent-red;
+        color: #fff;
+        font-size: rem(15);
+    }
+
+    &__text span {
+        color: $accent-red;
+    }
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: rem(28);
+
+    &__link {
+        font-size: rem(14);
+        font-weight: 500;
+        color: $text-secondary;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+
+    @media (max-width: 768px) {
+        position: fixed;
+        top: rem(106);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background-color: $bg-surface;
+        border-bottom: 1px solid $border-color;
+        padding: rem(24);
+        gap: rem(18);
+        transform: translateY(-130%);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.25s ease;
+
+        &.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+}
+
+.burger {
+    display: none;
+    flex-direction: column;
+    gap: rem(5);
+    background: none;
+    border: none;
+    padding: rem(6);
+    cursor: pointer;
+
+    span {
+        display: block;
+        width: rem(22);
+        height: 2px;
+        background-color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        display: flex;
+    }
+}

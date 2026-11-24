@@ -1,38 +1,11 @@
-@use "/src/sass/libs/modern-normalize.min.css";
+@use "libs/modern-normalize.min";
 
-h1,
-h2,
-h3,
-h4,
-h5,
-figure,
-p,
-ol,
-ul {
-	margin: 0;
-}
+@use "base/variables";
+@use "base/global";
 
-ol[role="list"],
-ul[role="list"] {
-	list-style: none;
-	padding-inline: 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-	font-size: inherit;
-	font-weight: inherit;
-}
-
-img {
-	display: block;
-	max-inline-size: 100%;
-}
-
-html {
-	font-family: "Barlow", sans-serif;
-	scroll-behavior: smooth;
-}
+@use "blocks/header";
+@use "blocks/hero";
+@use "blocks/overview";
+@use "blocks/calendar";
+@use "blocks/quick-access";
+@use "blocks/footer";

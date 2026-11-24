@@ -1,20 +1,269 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="Website for Ceramic soul brand" />
-		<meta name="author" content="Awesome student" />
-		<title>Ceramic soul</title>
-		<link rel="icon" type="image/x-icon" href="favicon.ico" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;1,400&display=swap"
-			rel="stylesheet"
-		/>
-	</head>
-	<body>
-		<script type="module" src="/src/js/script.js"></script>
-	</body>
+<html lang="ru">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>RCS — Лига сим-рейсинга Assetto Corsa</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
+		rel="stylesheet" />
+	<script type="module" src="/src/js/script.js"></script>
+</head>
+
+<body>
+	<!-- Бегущая строка -->
+	<div class="ticker">
+		<div class="ticker__track">
+			<span>🟢 СЕРВЕР ОНЛАЙН: Практика Спа-Франкоршам</span>
+			<span>🏆 ЛИДЕР ЧЕМПИОНАТА: M. Kovalenko (141 PTS)</span>
+			<span>📅 СЛЕДУЮЩИЙ ЭТАП: Гран-при Бельгии — Воскресенье, 20:00 EET</span>
+			<span>🔧 СБОРКА: CSP 0.2.4+ / Pure / RSS Formula Hybrid</span>
+			<span>🟢 СЕРВЕР ОНЛАЙН: Практика Спа-Франкоршам</span>
+			<span>🏆 ЛИДЕР ЧЕМПИОНАТА: M. Kovalenko (141 PTS)</span>
+			<span>📅 СЛЕДУЮЩИЙ ЭТАП: Гран-при Бельгии — Воскресенье, 20:00 EET</span>
+			<span>🔧 СБОРКА: CSP 0.2.4+ / Pure / RSS Formula Hybrid</span>
+		</div>
+	</div>
+
+	<!-- Шапка -->
+	<header class="header">
+		<div class="container header__inner">
+			<a href="/" class="logo">
+				<span class="logo__badge">RCS</span>
+				<span class="logo__text">RCS <span>F1</span></span>
+			</a>
+
+			<nav class="nav" id="mainNav">
+				<a href="#about" class="nav__link">О лиге</a>
+				<a href="#calendar" class="nav__link">Календарь</a>
+				<a href="#access" class="nav__link">Регламент и моды</a>
+				<a href="standings.html" class="nav__link">Таблица очков</a>
+			</nav>
+
+			<div class="header__actions">
+				<a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--discord">
+					Join Discord
+				</a>
+				<button class="burger" id="burgerBtn" aria-label="Открыть меню">
+					<span></span><span></span><span></span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main>
+		<!-- Hero + плашка статусов -->
+		<section class="hero">
+			<div class="hero__overlay"></div>
+			<div class="container hero__content">
+				<div class="hero__badge">SEASON 2026 · ASSETTO CORSA</div>
+				<h1 class="hero__title">СИМ-РЕЙСИНГ<br /><span>БЕЗ КОМПРОМИССОВ</span></h1>
+				<p class="hero__subtitle">
+					Еженедельные чемпионаты с живым судейством, телеметрией, обязательными пит-стопами и плотной борьбой
+					колесо в колесо.
+				</p>
+				<div class="hero__buttons">
+					<a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--primary">
+						Регистрация в Discord
+					</a>
+					<a href="#calendar" class="btn btn--outline">Смотреть календарь</a>
+				</div>
+
+				<!-- 4 карточки статуса -->
+				<div class="status-grid">
+					<div class="status-card">
+						<span class="status-card__label">ДО СТАРТА ЭТАПА</span>
+						<strong class="status-card__value status-card__value--accent" id="raceCountdown">04д 18ч
+							32м</strong>
+						<span class="status-card__sub">Гран-при Бельгии · Spa</span>
+					</div>
+					<div class="status-card">
+						<span class="status-card__label">СТАТУС СЕРВЕРА</span>
+						<strong class="status-card__value status-card__value--green">GREEN FLAG</strong>
+						<span class="status-card__sub">Тренировочный сервер открыт</span>
+					</div>
+					<div class="status-card">
+						<span class="status-card__label">РАСПИСАНИЕ УИК-ЭНДА</span>
+						<strong class="status-card__value">20:00 EET</strong>
+						<span class="status-card__sub">Каждое воскресенье (Q + R)</span>
+					</div>
+					<div class="status-card">
+						<span class="status-card__label">СООБЩЕСТВО DISCORD</span>
+						<strong class="status-card__value">184 пилота</strong>
+						<span class="status-card__sub">Регистрация на этап открыта</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- О лиге + Ближайшая гонка -->
+		<section class="overview" id="about">
+			<div class="container overview__grid">
+				<div class="overview__main">
+					<h2 class="section-title">О лиге <span>RCS F1</span></h2>
+					<p class="overview__desc">
+						Мы собираем пилотов, которым важна чистая борьба и предсказуемый регламент. Разбор инцидентов
+						стюардами после каждого этапа.
+					</p>
+
+					<div class="metrics">
+						<div class="metrics__item">
+							<span class="metrics__num">12</span>
+							<span class="metrics__text">Этапов в сезоне</span>
+						</div>
+						<div class="metrics__item">
+							<span class="metrics__num">50%</span>
+							<span class="metrics__text">Дистанция гонки</span>
+						</div>
+						<div class="metrics__item">
+							<span class="metrics__num">24</span>
+							<span class="metrics__text">Слота на стартовой решётке</span>
+						</div>
+					</div>
+
+					<div class="overview__media">
+						<!-- Замени src на свой скриншот из Assetto Corsa в src/img/ -->
+						<img src="/src/img/hero-race.jpg" alt="Борьба на трассе в Assetto Corsa" loading="lazy" />
+					</div>
+				</div>
+
+				<aside class="overview__sidebar">
+					<div class="next-race-card">
+						<div class="next-race-card__top">
+							<span class="tag tag--live">ROUND 05 · NEXT</span>
+							<span class="next-race-card__date">29 ноя · 20:00 EET</span>
+						</div>
+						<h3 class="next-race-card__title">Circuit de Spa-Francorchamps</h3>
+						<p class="next-race-card__meta">Бельгия · 22 круга · 1 обязательный пит-стоп</p>
+
+						<div class="next-race-card__specs">
+							<div><span>Квалификация:</span> <strong>20 мин (19:00)</strong></div>
+							<div><span>Гонка:</span> <strong>~1час 45 мин (19:00)</strong></div>
+							<div><span>Погода:</span> <strong>Переменная (Sol/Pure)</strong></div>
+							<div><span>Помощники:</span> <strong>Factory (ABS/TC)</strong></div>
+						</div>
+
+						<a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--primary btn--full">
+							Занять слот в Discord
+						</a>
+					</div>
+
+					<div class="side-box">
+						<h4 class="side-box__title">Как попасть на старт?</h4>
+						<ol class="steps-list">
+							<li>Зайди на наш сервер в Discord</li>
+							<li>Выбери свободный болид и номер в канале <code>#registration</code></li>
+							<li>Скачай пак модов и заходи на практику</li>
+						</ol>
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<!-- Календарь чемпионата -->
+		<section class="calendar" id="calendar">
+			<div class="container">
+				<div class="calendar__head">
+					<div>
+						<h2 class="section-title">2026 <span>RACE CALENDAR</span></h2>
+						<p class="calendar__sub">Расписание этапов сезона и статус регистрации</p>
+					</div>
+					<div class="calendar__filters" id="calendarFilters">
+						<button class="filter-btn is-active" data-filter="all">Все этапы</button>
+						<button class="filter-btn" data-filter="upcoming">Предстоящие</button>
+						<button class="filter-btn" data-filter="finished">Прошедшие</button>
+					</div>
+				</div>
+
+				<!-- Карточки рендерятся через script.js -->
+				<div class="calendar__grid" id="calendarGrid"></div>
+			</div>
+		</section>
+
+		<!-- Быстрый доступ -->
+		<section class="quick-access" id="access">
+			<div class="container">
+				<h2 class="section-title">Навигация <span>пилота</span></h2>
+				<div class="quick-grid">
+					<a href="#calendar" class="quick-card">
+						<span class="quick-card__icon">📅</span>
+						<h3>Расписание</h3>
+						<p>Даты этапов, дистанция и конфигурация трасс сезона</p>
+					</a>
+					<a href="standings.html" class="quick-card">
+						<span class="quick-card__icon">🏆</span>
+						<h3>Таблица очков</h3>
+						<p>Личный зачёт пилотов, победы и кубок конструкторов</p>
+					</a>
+					<a href="https://discord.com" target="_blank" rel="noopener" class="quick-card">
+						<span class="quick-card__icon">📦</span>
+						<h3>Пак модов и CSP</h3>
+						<p>Актуальная сборка машин, трасс и версия Custom Shaders Patch</p>
+					</a>
+					<a href="https://discord.com" target="_blank" rel="noopener" class="quick-card">
+						<span class="quick-card__icon">⚖️</span>
+						<h3>Регламент и штрафы</h3>
+						<p>Правила обгонов, границы трассы и система штрафных баллов</p>
+					</a>
+					<a href="https://discord.com" target="_blank" rel="noopener" class="quick-card">
+						<span class="quick-card__icon">🎮</span>
+						<h3>Настройка сервера</h3>
+						<p>Прямая ссылка подключения через Content Manager</p>
+					</a>
+					<a href="https://discord.com" target="_blank" rel="noopener" class="quick-card">
+						<span class="quick-card__icon">🚀</span>
+						<h3>Новичок в лиге?</h3>
+						<p>Пошаговый гайд по допуску к первому официальному заезду</p>
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Финальный CTA в Discord -->
+		<section class="discord-cta">
+			<div class="container">
+				<div class="discord-cta__box">
+					<div>
+						<h2>Готов выйти на стартовую решётку?</h2>
+						<p>Вся координация этапов, брифинги пилотов, телеметрия и регистрация проходят в нашем
+							Discord-сервере.</p>
+					</div>
+					<a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--white">
+						Перейти в Discord
+					</a>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<div class="footer__brand">
+				<a href="/" class="logo">
+					<span class="logo__badge">RCS</span>
+					<span class="logo__text">RCS <span>F1</span></span>
+				</a>
+				<p>Независимая сим-рейсинг лига в Assetto Corsa. Честная борьба на трассе каждый уик-энд.</p>
+			</div>
+			<div class="footer__links">
+				<h4>Чемпионат</h4>
+				<a href="#calendar">Календарь 2026</a>
+				<a href="standings.html">Таблица чемпионата</a>
+				<a href="#access">Пак модов</a>
+			</div>
+			<div class="footer__links">
+				<h4>Сообщество</h4>
+				<a href="https://discord.com" target="_blank" rel="noopener">Discord сервер</a>
+				<a href="https://youtube.com" target="_blank" rel="noopener">Трансляции гонок</a>
+			</div>
+		</div>
+		<div class="container footer__bottom">
+			<span>© 2026 Racing Series Championship. Not affiliated with Kunos Simulazioni.</span>
+		</div>
+	</footer>
+</body>
+
 </html>
