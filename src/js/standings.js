@@ -1,5 +1,4 @@
 import '../sass/style.scss';
-import { fetchSheetTab } from './sheets-api.js';
 import { fetchSheetTab, syncGlobalSettings } from './sheets-api.js';
 syncGlobalSettings();
 
