@@ -87,6 +87,98 @@ const FALLBACK_MELBOURNE_COORDS = [
   [144.9683, -37.8497],
 ];
 
+const TYRE_META = {
+  WET: { letter: 'W', label: 'Wet', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.16)', border: '#38bdf8' },
+  INTER: { letter: 'I', label: 'Inter', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.16)', border: '#22c55e' },
+  SOFT: { letter: 'S', label: 'Soft', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.16)', border: '#ef4444' },
+  MEDIUM: { letter: 'M', label: 'Medium', color: '#eab308', bg: 'rgba(234, 179, 8, 0.16)', border: '#eab308' },
+  HARD: { letter: 'H', label: 'Hard', color: '#f8fafc', bg: 'rgba(248, 250, 252, 0.14)', border: '#cbd5e1' },
+};
+
+function renderTyreBadge(tyreRaw = 'WET') {
+  const key = String(tyreRaw || 'WET').trim().toUpperCase();
+  const meta = TYRE_META[key] || TYRE_META.WET;
+
+  return `
+    <span
+      title="${meta.label}"
+      style="
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:2px 8px 2px 3px;
+        border-radius:999px;
+        background:${meta.bg};
+        border:1px solid ${meta.border};
+        color:${meta.color};
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:0.03em;
+        line-height:1.2;
+      "
+    >
+      <span
+        style="
+          display:inline-flex;
+          align-items:center;
+          justify-content:center;
+          width:18px;
+          height:18px;
+          border-radius:50%;
+          background:#0b0f17;
+          border:2px solid ${meta.border};
+          color:${meta.color};
+          font-size:10px;
+          font-weight:800;
+        "
+      >${meta.letter}</span>
+      <span>${key}</span>
+    </span>
+  `;
+}
+
+function getShortCode(driver) {
+  if (driver?.code) return String(driver.code).trim().toUpperCase().slice(0, 3);
+  const raw = String(driver?.name || '').trim();
+  if (!raw) return 'DRV';
+  const parts = raw.split(/\s+/);
+  const surname = parts[parts.length - 1];
+  return surname.slice(0, 3).toUpperCase();
+}
+
+const DEMO_BOTS_ENABLED = true;
+
+function createDummyDrivers() {
+  const roster = [
+    { id: 'bot-ham', code: 'HAM', name: 'Lewis Hamilton', team: 'Mercedes AMG Petronas F1 Team', color: '#14b8a6', tyre: 'WET', lap: 14, best: '1:28.910', last: '1:29.540', s1: '29.62', s2: '24.89', s3: '35.03', kmh: 291, inPit: false, pace: 0.000195 },
+    { id: 'bot-bot', code: 'BOT', name: 'Valtteri Bottas', team: 'Mercedes AMG Petronas F1 Team', color: '#2dd4bf', tyre: 'WET', lap: 14, best: '1:29.180', last: '1:29.812', s1: '29.75', s2: '24.98', s3: '35.08', kmh: 288, inPit: false, pace: 0.000193 },
+    { id: 'bot-vet', code: 'VET', name: 'Sebastian Vettel', team: 'Scuderia Ferrari', color: '#ef4444', tyre: 'WET', lap: 14, best: '1:29.045', last: '1:29.690', s1: '29.68', s2: '24.94', s3: '35.07', kmh: 289, inPit: false, pace: 0.000194 },
+    { id: 'bot-rai', code: 'RAI', name: 'Kimi Raikkonen', team: 'Scuderia Ferrari', color: '#f87171', tyre: 'INTER', lap: 14, best: '1:29.320', last: '1:29.985', s1: '29.82', s2: '25.05', s3: '35.11', kmh: 286, inPit: false, pace: 0.000191 },
+    { id: 'bot-ver', code: 'VER', name: 'Max Verstappen', team: 'Aston Martin Red Bull Racing', color: '#3b82f6', tyre: 'WET', lap: 14, best: '1:29.112', last: '1:29.744', s1: '29.70', s2: '24.96', s3: '35.08', kmh: 290, inPit: false, pace: 0.000192 },
+    { id: 'bot-ric', code: 'RIC', name: 'Daniel Ricciardo', team: 'Aston Martin Red Bull Racing', color: '#60a5fa', tyre: 'INTER', lap: 14, best: '1:29.402', last: '1:30.104', s1: '29.89', s2: '25.09', s3: '35.12', kmh: 285, inPit: false, pace: 0.000190 },
+    { id: 'bot-alo', code: 'ALO', name: 'Fernando Alonso', team: 'McLaren F1 Team', color: '#f97316', tyre: 'INTER', lap: 13, best: '1:29.780', last: '1:30.490', s1: '30.04', s2: '25.21', s3: '35.24', kmh: 281, inPit: false, pace: 0.000187 },
+    { id: 'bot-van', code: 'VAN', name: 'Stoffel Vandoorne', team: 'McLaren F1 Team', color: '#fb923c', tyre: 'WET', lap: 13, best: '1:30.120', last: '1:30.890', s1: '30.19', s2: '25.34', s3: '35.36', kmh: 277, inPit: false, pace: 0.000184 },
+    { id: 'bot-oco', code: 'OCO', name: 'Esteban Ocon', team: 'Sahara Force India F1 Team', color: '#f472b6', tyre: 'WET', lap: 13, best: '1:29.940', last: '1:30.670', s1: '30.10', s2: '25.27', s3: '35.30', kmh: 279, inPit: false, pace: 0.000186 },
+    { id: 'bot-per', code: 'PER', name: 'Sergio Perez', team: 'Sahara Force India F1 Team', color: '#ec4899', tyre: 'INTER', lap: 13, best: '1:30.015', last: '1:30.745', s1: '30.12', s2: '25.30', s3: '35.32', kmh: 278, inPit: false, pace: 0.000185 },
+    { id: 'bot-hul', code: 'HUL', name: 'Nico Hulkenberg', team: 'Renault Sport F1 Team', color: '#eab308', tyre: 'WET', lap: 13, best: '1:29.865', last: '1:30.580', s1: '30.07', s2: '25.24', s3: '35.27', kmh: 280, inPit: false, pace: 0.000186 },
+    { id: 'bot-sai', code: 'SAI', name: 'Carlos Sainz', team: 'Renault Sport F1 Team', color: '#facc15', tyre: 'INTER', lap: 13, best: '1:30.050', last: '1:30.790', s1: '30.15', s2: '25.31', s3: '35.33', kmh: 0, inPit: true, pitTimerMs: 12000, pace: 0.000185 },
+    { id: 'bot-mag', code: 'MAG', name: 'Kevin Magnussen', team: 'Haas F1 Team', color: '#a855f7', tyre: 'WET', lap: 13, best: '1:30.240', last: '1:31.010', s1: '30.26', s2: '25.41', s3: '35.34', kmh: 276, inPit: false, pace: 0.000183 },
+    { id: 'bot-gro', code: 'GRO', name: 'Romain Grosjean', team: 'Haas F1 Team', color: '#c084fc', tyre: 'WET', lap: 13, best: '1:30.380', last: '1:31.140', s1: '30.32', s2: '25.45', s3: '35.37', kmh: 275, inPit: false, pace: 0.000182 },
+    { id: 'bot-gas', code: 'GAS', name: 'Pierre Gasly', team: 'Red Bull Toro Rosso Honda', color: '#818cf8', tyre: 'INTER', lap: 13, best: '1:30.290', last: '1:31.060', s1: '30.28', s2: '25.40', s3: '35.38', kmh: 276, inPit: false, pace: 0.000183 },
+    { id: 'bot-har', code: 'HAR', name: 'Brendon Hartley', team: 'Red Bull Toro Rosso Honda', color: '#6366f1', tyre: 'WET', lap: 12, best: '1:30.690', last: '1:31.490', s1: '30.46', s2: '25.58', s3: '35.45', kmh: 272, inPit: false, pace: 0.000179 },
+    { id: 'bot-eri', code: 'ERI', name: 'Marcus Ericsson', team: 'Alfa Romeo Sauber F1 Team', color: '#22c55e', tyre: 'WET', lap: 12, best: '1:30.780', last: '1:31.580', s1: '30.51', s2: '25.61', s3: '35.46', kmh: 271, inPit: false, pace: 0.000178 },
+    { id: 'bot-lec', code: 'LEC', name: 'Charles Leclerc', team: 'Alfa Romeo Sauber F1 Team', color: '#4ade80', tyre: 'INTER', lap: 13, best: '1:30.190', last: '1:30.940', s1: '30.21', s2: '25.36', s3: '35.37', kmh: 277, inPit: false, pace: 0.000184 },
+    { id: 'bot-str', code: 'STR', name: 'Lance Stroll', team: 'Williams Martini Racing', color: '#38bdf8', tyre: 'WET', lap: 12, best: '1:30.890', last: '1:31.710', s1: '30.56', s2: '25.66', s3: '35.49', kmh: 270, inPit: false, pace: 0.000177 },
+    { id: 'bot-sir', code: 'SIR', name: 'Sergey Sirotkin', team: 'Williams Martini Racing', color: '#7dd3fc', tyre: 'WET', lap: 12, best: '1:30.960', last: '1:31.820', s1: '30.60', s2: '25.69', s3: '35.53', kmh: 269, inPit: false, pace: 0.000176 },
+  ];
+
+  const total = roster.length;
+  return roster.map((d, idx) => ({
+    ...d,
+    progress: Number((((total - idx) / (total + 1)) * 0.94 + 0.03).toFixed(4)),
+  }));
+}
+
 let map = null;
 let currentCircuitId = document.getElementById('trackSelect')?.value || 'au-1953';
 let trackPolyline = [];
@@ -94,9 +186,9 @@ let cumulativeLengths = [];
 let totalTrackLength = 0;
 let showLabels = true;
 let followMode = false;
-const demoFallbackEnabled = false;
 let selectedDriverId = null;
-let activeDrivers = [];
+let dummyDrivers = createDummyDrivers();
+let activeDrivers = DEMO_BOTS_ENABLED ? dummyDrivers : [];
 let isLiveFeedActive = false;
 
 const carMarkers = new Map();
@@ -224,13 +316,14 @@ function syncCarMarkers() {
   }
 
   activeDrivers.forEach((d) => {
+    const shortTag = getShortCode(d);
     if (!carMarkers.has(d.id)) {
       const el = document.createElement('div');
       el.className = 'car-marker';
       el.style.color = d.color;
       el.innerHTML = `
         <span class="car-marker__dot" style="background:${d.color}"></span>
-        <span class="car-marker__tag">${d.name.slice(0, 3).toUpperCase()}</span>
+        <span class="car-marker__tag">${shortTag}</span>
       `;
       el.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -241,6 +334,9 @@ function syncCarMarkers() {
         .setLngLat(getCoordsAtProgress(d.progress))
         .addTo(map);
       carMarkers.set(d.id, { marker, el });
+    } else {
+      const tag = carMarkers.get(d.id).el.querySelector('.car-marker__tag');
+      if (tag) tag.textContent = shortTag;
     }
   });
 
@@ -262,7 +358,7 @@ function updateUIState() {
   const selected = activeDrivers.find((d) => d.id === selectedDriverId);
 
   if (focusLabel) {
-    if (followMode && selected) focusLabel.textContent = `Камера: За ${selected.name}`;
+    if (followMode && selected) focusLabel.textContent = `Камера: За ${getShortCode(selected)}`;
     else if (followMode) focusLabel.textContent = 'Камера: За лидером';
     else focusLabel.textContent = 'Камера: Свободная';
   }
@@ -292,21 +388,22 @@ function renderTimingTables() {
 
   const sorted = [...activeDrivers].sort((a, b) => (b.lap + b.progress) - (a.lap + a.progress));
   const leader = sorted[0];
-  if (countEl) countEl.textContent = `${sorted.length} на трассе`;
+  if (countEl) countEl.textContent = `${sorted.length} на трассе${isLiveFeedActive ? '' : ' · демо'}`;
 
   if (miniList) {
     miniList.innerHTML = sorted
       .map((d, idx) => {
+        const shortTag = getShortCode(d);
         const diff = (leader.lap + leader.progress) - (d.lap + d.progress);
-        const gap = idx === 0 ? 'LEADER' : `+${(diff * 78.4).toFixed(1)}s`;
+        const gap = idx === 0 ? 'LEADER' : `+${Math.max(0.1, diff * 88.0).toFixed(1)}s`;
         return `
           <div class="mini-row ${d.id === selectedDriverId ? 'is-selected' : ''}" data-id="${d.id}">
             <div class="mini-row__left">
               <span class="mini-row__pos">${idx + 1}</span>
               <span class="mini-row__bar" style="background:${d.color}"></span>
-              <span>${d.name}</span>
+              <span>${shortTag}</span>
             </div>
-            <span class="mini-row__gap">${gap}</span>
+            <span class="mini-row__gap">${d.inPit ? 'IN PIT' : gap}</span>
           </div>
         `;
       })
@@ -320,8 +417,9 @@ function renderTimingTables() {
   if (fullBody) {
     fullBody.innerHTML = sorted
       .map((d, idx) => {
+        const shortTag = getShortCode(d);
         const diff = (leader.lap + leader.progress) - (d.lap + d.progress);
-        const gap = idx === 0 ? '—' : `+${(diff * 78.4).toFixed(3)}`;
+        const gap = idx === 0 ? '—' : `+${Math.max(0.05, diff * 88.0).toFixed(3)}`;
         const statusText = d.inPit ? 'IN PIT' : 'ON TRACK';
 
         return `
@@ -330,7 +428,8 @@ function renderTimingTables() {
             <td>
               <div class="lt-driver-cell">
                 <span class="lt-team-bar" style="background:${d.color}"></span>
-                <span>${d.name}</span>
+                <strong>${shortTag}</strong>
+                <span class="lt-muted">${d.name}</span>
               </div>
             </td>
             <td class="lt-muted">${d.team}</td>
@@ -342,7 +441,7 @@ function renderTimingTables() {
             <td class="lt-mono">${d.s3}</td>
             <td class="lt-mono lt-muted">${gap}</td>
             <td class="lt-mono">${d.kmh} км/ч</td>
-            <td><span class="tyre-badge tyre-badge--${d.tyre}">${d.tyre}</span></td>
+            <td>${renderTyreBadge(d.tyre)}</td>
             <td><span class="status-pill">${statusText}</span></td>
           </tr>
         `;
@@ -376,7 +475,7 @@ async function switchCircuit(circuitId) {
 async function pollLiveServer() {
   try {
     const res = await fetch('/api/live');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('API not OK');
     const data = await res.json();
 
     const statusEl = document.querySelector('.live-server-box__status span:last-child');
@@ -405,20 +504,23 @@ async function pollLiveServer() {
         return;
       }
     } else if (statusEl) {
-      statusEl.textContent = 'СЕРВЕР ОФФЛАЙН';
+      statusEl.textContent = 'СЕРВЕР ОФФЛАЙН · ДЕМО-РЕЖИМ';
     }
 
     isLiveFeedActive = false;
-    activeDrivers = demoFallbackEnabled ? activeDrivers : [];
+    activeDrivers = DEMO_BOTS_ENABLED ? dummyDrivers : [];
     if (descEl) {
-      descEl.textContent = data.online
-        ? 'На сервере пока никого нет — маркеры реальных пилотов появятся при заезде.'
-        : 'Сервер сейчас не отвечает.';
+      descEl.textContent = DEMO_BOTS_ENABLED
+        ? 'Сервер пуст или недоступен — на карте идут 20 тестовых пилотов F1 2018.'
+        : 'Живых пилотов на трассе сейчас нет.';
     }
     syncCarMarkers();
     renderTimingTables();
   } catch {
-    // Локальный запуск без Cloudflare Functions
+    isLiveFeedActive = false;
+    activeDrivers = DEMO_BOTS_ENABLED ? dummyDrivers : [];
+    syncCarMarkers();
+    renderTimingTables();
   }
 }
 
@@ -473,7 +575,33 @@ function startRenderLoop() {
   let last = performance.now();
 
   function tick(now) {
+    const dt = Math.min(50, now - last);
     last = now;
+
+    if (!isLiveFeedActive && DEMO_BOTS_ENABLED) {
+      const stepFactor = dt / 16.67;
+      dummyDrivers.forEach((d, idx) => {
+        if (d.inPit) {
+          d.kmh = 0;
+          if (typeof d.pitTimerMs === 'number') {
+            d.pitTimerMs -= dt;
+            if (d.pitTimerMs <= 0) {
+              d.inPit = false;
+              d.tyre = d.tyre === 'WET' ? 'INTER' : 'WET';
+            }
+          }
+          return;
+        }
+
+        const wave = 1 + Math.sin(now / 1200 + idx * 1.3) * 0.02;
+        d.progress += d.pace * wave * stepFactor;
+        if (d.progress >= 1) {
+          d.progress -= 1;
+          d.lap += 1;
+        }
+        d.kmh = Math.round(274 + Math.sin(now / 450 + idx) * 14);
+      });
+    }
 
     activeDrivers.forEach((d) => {
       const item = carMarkers.get(d.id);
