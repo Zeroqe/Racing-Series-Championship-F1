@@ -37,11 +37,17 @@ function mapCarToTeam(carModel = '') {
   return { team: 'RCS F1', color: '#ff2a2a' };
 }
 
-async function fetchWithTimeout(url, timeoutMs = 3500) {
+async function fetchJson(url, timeoutMs = 4000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { signal: controller.signal });
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; RCSF1-Telemetry/1.0)',
+        Accept: 'application/json',
+      },
+    });
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -52,12 +58,13 @@ async function fetchWithTimeout(url, timeoutMs = 3500) {
 }
 
 export async function onRequestGet() {
-  const [info, timings] = await Promise.all([
-    fetchWithTimeout(`${AC_SERVER_BASE}/INFO`),
-    fetchWithTimeout(`${AC_SERVER_BASE}/api/live-timings`),
+  const [info, timingsCars, timingsRoot] = await Promise.all([
+    fetchJson(`${AC_SERVER_BASE}/INFO`),
+    fetchJson(`${AC_SERVER_BASE}/api/live-timings/cars`),
+    fetchJson(`${AC_SERVER_BASE}/api/live-timings`),
   ]);
 
-  if (!info && !timings) {
+  if (!info && !timingsCars && !timingsRoot) {
     return new Response(
       JSON.stringify({
         online: false,
@@ -77,45 +84,51 @@ export async function onRequestGet() {
     );
   }
 
-  // Разбираем список пилотов, если ACSM отдаёт live-timings
-  const rawCars =
-    timings?.ConnectedDrivers ||
-    timings?.Cars ||
-    timings?.drivers ||
+  // Assetto Hosting отдаёт машины либо массивом, либо словарём по CarID
+  const rawSource =
+    timingsCars?.Cars ||
+    timingsCars?.ConnectedDrivers ||
+    timingsCars ||
+    timingsRoot?.ConnectedDrivers ||
+    timingsRoot?.Cars ||
     [];
 
-  const drivers = Array.isArray(rawCars)
-    ? rawCars
-        .filter((c) => c && (c.DriverName || c.CarInfo?.DriverName || c.name))
-        .map((c, idx) => {
-          const name = c.DriverName || c.CarInfo?.DriverName || c.name || `Driver ${idx + 1}`;
-          const model = c.CarModel || c.CarInfo?.CarModel || c.car || '';
-          const { team, color } = mapCarToTeam(model);
-          const splits = c.LastLapSplits || c.Splits || [];
+  const carList = Array.isArray(rawSource)
+    ? rawSource
+    : typeof rawSource === 'object' && rawSource !== null
+      ? Object.values(rawSource)
+      : [];
 
-          return {
-            id: `${name.toLowerCase().replace(/\s+/g, '_')}_${idx}`,
-            name,
-            team,
-            color,
-            lap: Number(c.LapCount ?? c.Laps ?? 0),
-            progress: Number(c.SplinePosition ?? c.NormalizedSplinePosition ?? 0),
-            best: formatLapTime(c.BestLap),
-            last: formatLapTime(c.LastLap),
-            s1: formatSectorTime(splits[0]),
-            s2: formatSectorTime(splits[1]),
-            s3: formatSectorTime(splits[2]),
-            kmh: Math.round(Number(c.SpeedKmh ?? c.TopSpeed ?? 0)),
-            tyre: (c.TyreCompound || 'S').slice(0, 1).toUpperCase(),
-            inPit: Boolean(c.IsInPit || c.InPitLane),
-          };
-        })
-    : [];
+  const drivers = carList
+    .filter((c) => c && typeof c === 'object' && (c.DriverName || c.CarInfo?.DriverName || c.Name))
+    .map((c, idx) => {
+      const name = c.DriverName || c.CarInfo?.DriverName || c.Name || `Driver ${idx + 1}`;
+      const model = c.CarModel || c.CarInfo?.CarModel || c.Model || '';
+      const { team, color } = mapCarToTeam(model);
+      const splits = c.LastLapSplits || c.CurrentLapSplits || c.Splits || [];
+
+      return {
+        id: `${name.toLowerCase().replace(/\s+/g, '_')}_${idx}`,
+        name,
+        team,
+        color,
+        lap: Number(c.LapCount ?? c.NumLaps ?? c.Laps ?? 0),
+        progress: Number(c.SplinePosition ?? c.NormalizedSplinePosition ?? c.NormalisedSplinePosition ?? 0),
+        best: formatLapTime(c.BestLap),
+        last: formatLapTime(c.LastLap),
+        s1: formatSectorTime(splits[0]),
+        s2: formatSectorTime(splits[1]),
+        s3: formatSectorTime(splits[2]),
+        kmh: Math.round(Number(c.SpeedKmh ?? c.Speed ?? 0)),
+        tyre: (c.TyreCompound || c.Tyres || 'S').slice(0, 1).toUpperCase(),
+        inPit: Boolean(c.IsInPit || c.InPitLane || c.InPit),
+      };
+    });
 
   const payload = {
     online: true,
     serverName: info?.name || 'Racing Series Championship F1',
-    trackRaw: info?.track || timings?.Track || '',
+    trackRaw: info?.track || timingsRoot?.Track || '',
     sessionType: SESSION_NAMES[info?.session] || 'PRACTICE',
     clients: Number(info?.clients ?? drivers.length),
     maxClients: Number(info?.maxclients ?? 20),
