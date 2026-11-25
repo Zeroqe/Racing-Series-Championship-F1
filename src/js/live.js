@@ -87,19 +87,6 @@ const FALLBACK_MELBOURNE_COORDS = [
   [144.9683, -37.8497],
 ];
 
-const DEMO_DRIVERS = [
-  { id: 'hamilton', name: 'Hamilton', team: 'Mercedes AMG', color: '#14b8a6', lap: 14, progress: 0.74, speed: 0.0132, best: '1:18.412', last: '1:18.604', s1: '22.410', s2: '29.812', s3: '26.382', kmh: 318, tyre: 'S', inPit: false },
-  { id: 'vettel', name: 'Vettel', team: 'Scuderia Ferrari', color: '#ef4444', lap: 14, progress: 0.71, speed: 0.0131, best: '1:18.520', last: '1:18.711', s1: '22.480', s2: '29.790', s3: '26.441', kmh: 316, tyre: 'S', inPit: false },
-  { id: 'verstappen', name: 'Verstappen', team: 'Red Bull Racing', color: '#3b82f6', lap: 14, progress: 0.67, speed: 0.0130, best: '1:18.690', last: '1:18.890', s1: '22.520', s2: '29.905', s3: '26.465', kmh: 312, tyre: 'S', inPit: false },
-  { id: 'bottas', name: 'Bottas', team: 'Mercedes AMG', color: '#14b8a6', lap: 14, progress: 0.62, speed: 0.0129, best: '1:18.815', last: '1:19.012', s1: '22.590', s2: '29.940', s3: '26.482', kmh: 314, tyre: 'M', inPit: false },
-  { id: 'raikkonen', name: 'Raikkonen', team: 'Scuderia Ferrari', color: '#ef4444', lap: 14, progress: 0.56, speed: 0.0128, best: '1:18.940', last: '1:19.150', s1: '22.615', s2: '30.010', s3: '26.525', kmh: 315, tyre: 'M', inPit: false },
-  { id: 'ricciardo', name: 'Ricciardo', team: 'Red Bull Racing', color: '#3b82f6', lap: 14, progress: 0.50, speed: 0.0127, best: '1:19.105', last: '1:19.320', s1: '22.680', s2: '30.080', s3: '26.560', kmh: 311, tyre: 'S', inPit: false },
-  { id: 'alonso', name: 'Alonso', team: 'McLaren F1', color: '#f97316', lap: 14, progress: 0.43, speed: 0.0126, best: '1:19.310', last: '1:19.540', s1: '22.740', s2: '30.190', s3: '26.610', kmh: 309, tyre: 'M', inPit: false },
-  { id: 'hulkenberg', name: 'Hulkenberg', team: 'Renault F1', color: '#eab308', lap: 14, progress: 0.35, speed: 0.0125, best: '1:19.480', last: '1:19.710', s1: '22.810', s2: '30.250', s3: '26.650', kmh: 310, tyre: 'H', inPit: false },
-  { id: 'ocon', name: 'Ocon', team: 'Force India', color: '#ec4899', lap: 14, progress: 0.27, speed: 0.0124, best: '1:19.650', last: '1:19.885', s1: '22.860', s2: '30.340', s3: '26.685', kmh: 312, tyre: 'M', inPit: false },
-  { id: 'gasly', name: 'Gasly', team: 'Toro Rosso', color: '#2563eb', lap: 14, progress: 0.18, speed: 0.0123, best: '1:19.890', last: '1:20.120', s1: '22.950', s2: '30.420', s3: '26.750', kmh: 307, tyre: 'S', inPit: false },
-];
-
 let map = null;
 let currentCircuitId = document.getElementById('trackSelect')?.value || 'au-1953';
 let trackPolyline = [];
@@ -107,9 +94,9 @@ let cumulativeLengths = [];
 let totalTrackLength = 0;
 let showLabels = true;
 let followMode = false;
-const demoFallbackEnabled = true;
+const demoFallbackEnabled = false;
 let selectedDriverId = null;
-let activeDrivers = [...DEMO_DRIVERS];
+let activeDrivers = [];
 let isLiveFeedActive = false;
 
 const carMarkers = new Map();
@@ -298,8 +285,8 @@ function renderTimingTables() {
 
   if (!activeDrivers.length) {
     if (countEl) countEl.textContent = '0 на трассе';
-    if (miniList) miniList.innerHTML = '<div style="padding:20px;color:#8b92a5;font-size:0.85rem;">На сервере пока никого</div>';
-    if (fullBody) fullBody.innerHTML = '<tr><td colspan="13" style="padding:24px;text-align:center;color:#8b92a5;">Заезжай первым — на трассе пока никого</td></tr>';
+    if (miniList) miniList.innerHTML = '<div style="padding:20px;color:#8b92a5;font-size:0.85rem;">На трассе пока никого</div>';
+    if (fullBody) fullBody.innerHTML = '<tr><td colspan="13" style="padding:24px;text-align:center;color:#8b92a5;">Живых пилотов на трассе сейчас нет</td></tr>';
     return;
   }
 
@@ -335,7 +322,6 @@ function renderTimingTables() {
       .map((d, idx) => {
         const diff = (leader.lap + leader.progress) - (d.lap + d.progress);
         const gap = idx === 0 ? '—' : `+${(diff * 78.4).toFixed(3)}`;
-        const speedVal = isLiveFeedActive ? d.kmh : Math.round(d.kmh + Math.sin(Date.now() / 400 + idx) * 14);
         const statusText = d.inPit ? 'IN PIT' : 'ON TRACK';
 
         return `
@@ -355,7 +341,7 @@ function renderTimingTables() {
             <td class="lt-mono">${d.s2}</td>
             <td class="lt-mono">${d.s3}</td>
             <td class="lt-mono lt-muted">${gap}</td>
-            <td class="lt-mono">${speedVal} км/ч</td>
+            <td class="lt-mono">${d.kmh} км/ч</td>
             <td><span class="tyre-badge tyre-badge--${d.tyre}">${d.tyre}</span></td>
             <td><span class="status-pill">${statusText}</span></td>
           </tr>
@@ -408,20 +394,26 @@ async function pollLiveServer() {
         await switchCircuit(detectedTrack);
       }
 
-      if (data.drivers && data.drivers.length > 0) {
+      if (Array.isArray(data.drivers) && data.drivers.length > 0) {
         isLiveFeedActive = true;
         activeDrivers = data.drivers;
-        if (descEl) descEl.textContent = `Прямой эфир телеметрии с 51.77.43.82:18814 · На трассе ${data.drivers.length} пилот(ов).`;
+        if (descEl) {
+          descEl.textContent = `Живая телеметрия с сервера · На трассе ${data.drivers.length} пилот(ов).`;
+        }
         syncCarMarkers();
         renderTimingTables();
         return;
       }
+    } else if (statusEl) {
+      statusEl.textContent = 'СЕРВЕР ОФФЛАЙН';
     }
 
     isLiveFeedActive = false;
-    activeDrivers = demoFallbackEnabled ? DEMO_DRIVERS : [];
-    if (descEl && data.online) {
-      descEl.textContent = 'Заезжай первым — на сервере пока никого. Показан демо-пелотон F1 2018.';
+    activeDrivers = demoFallbackEnabled ? activeDrivers : [];
+    if (descEl) {
+      descEl.textContent = data.online
+        ? 'На сервере пока никого нет — маркеры реальных пилотов появятся при заезде.'
+        : 'Сервер сейчас не отвечает.';
     }
     syncCarMarkers();
     renderTimingTables();
@@ -481,13 +473,9 @@ function startRenderLoop() {
   let last = performance.now();
 
   function tick(now) {
-    const dt = (now - last) / 1000;
     last = now;
 
     activeDrivers.forEach((d) => {
-      if (!isLiveFeedActive && d.speed) {
-        d.progress += d.speed * dt;
-      }
       const item = carMarkers.get(d.id);
       if (item) {
         item.marker.setLngLat(getCoordsAtProgress(d.progress));
