@@ -1,7 +1,7 @@
 const AC_SERVER_BASE = 'http://51.77.43.82:18814';
 
 const SESSION_NAMES = {
-  0: 'BOOKING',
+  0: 'BOOKING / LOBBY',
   1: 'PRACTICE',
   2: 'QUALIFYING',
   3: 'RACE',
@@ -68,11 +68,12 @@ export async function onRequestGet() {
     return new Response(
       JSON.stringify({
         online: false,
-        serverName: 'RCS F1 Server',
+        serverName: 'RSC F1 2018',
         trackRaw: '',
         sessionType: 'OFFLINE',
         clients: 0,
-        maxClients: 20,
+        maxClients: 19,
+        cars: [],
         drivers: [],
       }),
       {
@@ -84,7 +85,9 @@ export async function onRequestGet() {
     );
   }
 
-  // Assetto Hosting отдаёт машины либо массивом, либо словарём по CarID
+  const rawCars = Array.isArray(info?.cars) ? info.cars : [];
+  const leagueCars = rawCars.filter((c) => typeof c === 'string' && c.toLowerCase().includes('f1_'));
+
   const rawSource =
     timingsCars?.Cars ||
     timingsCars?.ConnectedDrivers ||
@@ -127,11 +130,12 @@ export async function onRequestGet() {
 
   const payload = {
     online: true,
-    serverName: info?.name || 'Racing Series Championship F1',
+    serverName: info?.name || 'RSC F1 2018',
     trackRaw: info?.track || timingsRoot?.Track || '',
     sessionType: SESSION_NAMES[info?.session] || 'PRACTICE',
     clients: Number(info?.clients ?? drivers.length),
-    maxClients: Number(info?.maxclients ?? 20),
+    maxClients: Number(info?.maxclients ?? 19),
+    cars: leagueCars,
     drivers,
   };
 

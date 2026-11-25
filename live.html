@@ -10,7 +10,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
         rel="stylesheet" />
-    <!-- MapLibre GL JS для 3D спутниковой карты -->
     <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script type="module" src="/src/js/live.js"></script>
@@ -19,13 +18,13 @@
 <body>
     <div class="ticker">
         <div class="ticker__track">
-            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: RSC F1 2018</span>
             <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
-            <span>📅 ЭТАП 2: Каталунья — 28–29 ноября (Сб Q / Вс R)</span>
+            <span>📅 ЭТАП 1: Австралия · Мельбурн (дождевая, пт вечер)</span>
             <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
-            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: RSC F1 2018</span>
             <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
-            <span>📅 ЭТАП 2: Каталунья — 28–29 ноября (Сб Q / Вс R)</span>
+            <span>📅 ЭТАП 1: Австралия · Мельбурн (дождевая, пт вечер)</span>
             <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
         </div>
     </div>
@@ -72,8 +71,8 @@
 
                     <div class="live-controls">
                         <select id="trackSelect" class="live-track-select" aria-label="Выбор трассы чемпионата">
-                            <option value="es-1991" selected>Этап 02 · Каталунья (Испания)</option>
-                            <option value="bh-2002">Этап 01 · Бахрейн (Сахир)</option>
+                            <option value="au-1953" selected>Этап 01 · Мельбурн · Альберт-Парк (Австралия)</option>
+                            <option value="es-1991">Этап 02 · Каталунья (Испания)</option>
                             <option value="ca-1978">Этап 03 · Монреаль (Канада)</option>
                             <option value="at-1969">Этап 04 · Шпильберг (Австрия)</option>
                             <option value="gb-1948">Этап 05 · Сильверстоун (Великобритания)</option>
@@ -87,29 +86,24 @@
                     </div>
                 </div>
 
-                <!-- Основной блок: 3D карта + правая панель сервера -->
                 <div class="live-workspace" id="liveWorkspace">
                     <div class="live-map-shell">
-                        <!-- Контейнер MapLibre 3D -->
                         <div id="map3d" class="live-map-canvas"></div>
 
-                        <!-- Верхняя левая панель управления камерой (3D / Сверху / За лидером) -->
                         <div class="map-hud map-hud--top-left">
                             <button type="button" class="map-cam-btn is-active" id="btnCam3D">3D</button>
                             <button type="button" class="map-cam-btn" id="btnCamTop">Сверху</button>
                             <button type="button" class="map-cam-btn" id="btnCamFollow">За лидером</button>
                         </div>
 
-                        <!-- Верхняя правая панель: ТВ режим и название трассы -->
                         <div class="map-hud map-hud--top-right">
                             <button type="button" class="map-tv-btn" id="btnFullscreen">⛶ На весь экран · ТВ</button>
                             <div class="map-track-info">
-                                <strong id="hudTrackName">Circuit de Barcelona-Catalunya</strong>
-                                <span id="hudTrackMeta">4,657 км · 16 поворотов · SuzQ F1 2018</span>
+                                <strong id="hudTrackName">Albert Park Circuit · Melbourne</strong>
+                                <span id="hudTrackMeta">5,303 км · 16 поворотов · SuzQ F1 2018</span>
                             </div>
                         </div>
 
-                        <!-- Нижняя левая легенда секторов -->
                         <div class="map-hud map-hud--bottom-left">
                             <span><i class="sec-dot sec-dot--s1"></i> S1</span>
                             <span><i class="sec-dot sec-dot--s2"></i> S2</span>
@@ -119,7 +113,6 @@
                         </div>
                     </div>
 
-                    <!-- Правая колонка: Статус сервера и мини-башня позиций -->
                     <aside class="live-side-panel">
                         <div class="live-server-box">
                             <div class="live-server-box__status">
@@ -146,7 +139,6 @@
                     </aside>
                 </div>
 
-                <!-- Нижняя полноширинная таблица телеметрии (как на скрине) -->
                 <div class="live-full-timing">
                     <div class="live-full-timing__wrap">
                         <table class="live-full-table">

@@ -1,6 +1,13 @@
 import '../sass/style.scss';
 
 const CIRCUITS = {
+  'au-1953': {
+    name: 'Albert Park Circuit · Melbourne',
+    meta: '5,303 км · 16 поворотов · SuzQ F1 2018',
+    center: [144.9683, -37.8497],
+    zoom: 14.3,
+    keywords: ['melbourne', 'albert_park', 'australia'],
+  },
   'es-1991': {
     name: 'Circuit de Barcelona-Catalunya',
     meta: '4,657 км · 16 поворотов · SuzQ F1 2018',
@@ -73,12 +80,11 @@ const CIRCUITS = {
   },
 };
 
-const FALLBACK_BARCELONA_COORDS = [
-  [2.2612, 41.5698], [2.2535, 41.5646], [2.2528, 41.5653], [2.2547, 41.5673],
-  [2.2530, 41.5699], [2.2548, 41.5725], [2.2578, 41.5729], [2.2590, 41.5707],
-  [2.2572, 41.5687], [2.2584, 41.5678], [2.2625, 41.5712], [2.2633, 41.5735],
-  [2.2610, 41.5754], [2.2585, 41.5742], [2.2598, 41.5722], [2.2648, 41.5752],
-  [2.2662, 41.5742], [2.2646, 41.5727], [2.2655, 41.5721], [2.2612, 41.5698],
+const FALLBACK_MELBOURNE_COORDS = [
+  [144.9683, -37.8497], [144.9718, -37.8475], [144.9746, -37.8458], [144.9752, -37.8467],
+  [144.9722, -37.8493], [144.9704, -37.8520], [144.9688, -37.8548], [144.9665, -37.8562],
+  [144.9642, -37.8549], [144.9628, -37.8525], [144.9645, -37.8505], [144.9668, -37.8502],
+  [144.9683, -37.8497],
 ];
 
 const DEMO_DRIVERS = [
@@ -95,13 +101,13 @@ const DEMO_DRIVERS = [
 ];
 
 let map = null;
-let currentCircuitId = 'es-1991';
+let currentCircuitId = document.getElementById('trackSelect')?.value || 'au-1953';
 let trackPolyline = [];
 let cumulativeLengths = [];
 let totalTrackLength = 0;
 let showLabels = true;
 let followMode = false;
-let demoFallbackEnabled = true;
+const demoFallbackEnabled = true;
 let selectedDriverId = null;
 let activeDrivers = [...DEMO_DRIVERS];
 let isLiveFeedActive = false;
@@ -129,7 +135,7 @@ function buildTrackSpline(coords) {
 }
 
 function getCoordsAtProgress(t) {
-  if (!trackPolyline.length) return [2.2569, 41.5700];
+  if (!trackPolyline.length) return [144.9683, -37.8497];
   const norm = ((t % 1) + 1) % 1;
   const targetDist = norm * totalTrackLength;
 
@@ -168,7 +174,7 @@ async function fetchCircuitGeoJSON(circuitId) {
   } catch {
     // Используем запасной контур
   }
-  return FALLBACK_BARCELONA_COORDS;
+  return FALLBACK_MELBOURNE_COORDS;
 }
 
 function renderTrackLayers() {
@@ -223,7 +229,6 @@ function syncCarMarkers() {
   if (!map) return;
   const activeIds = new Set(activeDrivers.map((d) => d.id));
 
-  // Удаляем ушедших с сервера
   for (const [id, item] of carMarkers.entries()) {
     if (!activeIds.has(id)) {
       item.marker.remove();
@@ -231,7 +236,6 @@ function syncCarMarkers() {
     }
   }
 
-  // Добавляем или обновляем текущих
   activeDrivers.forEach((d) => {
     if (!carMarkers.has(d.id)) {
       const el = document.createElement('div');
@@ -367,7 +371,7 @@ function renderTimingTables() {
 
 async function switchCircuit(circuitId) {
   currentCircuitId = circuitId;
-  const info = CIRCUITS[circuitId] || CIRCUITS['es-1991'];
+  const info = CIRCUITS[circuitId] || CIRCUITS['au-1953'];
   document.getElementById('hudTrackName').textContent = info.name;
   document.getElementById('hudTrackMeta').textContent = info.meta;
 
@@ -383,7 +387,6 @@ async function switchCircuit(circuitId) {
   }
 }
 
-// Опрос реального сервера 51.77.43.82:18814 через Cloudflare Function /api/live
 async function pollLiveServer() {
   try {
     const res = await fetch('/api/live');
@@ -415,23 +418,22 @@ async function pollLiveServer() {
       }
     }
 
-    // Если сервер пуст или локальный dev без Cloudflare
     isLiveFeedActive = false;
     activeDrivers = demoFallbackEnabled ? DEMO_DRIVERS : [];
     if (descEl && data.online) {
-      descEl.textContent = 'Заезжай первым — на сервере пока никого. Можно включить демо-пелотон кнопкой сверху.';
+      descEl.textContent = 'Заезжай первым — на сервере пока никого. Показан демо-пелотон F1 2018.';
     }
     syncCarMarkers();
     renderTimingTables();
   } catch {
-    // На localhost без Cloudflare остаёмся в режиме предпросмотра
+    // Локальный запуск без Cloudflare Functions
   }
 }
 
 function initMap() {
   if (!window.maplibregl) return;
 
-  const initial = CIRCUITS['es-1991'];
+  const initial = CIRCUITS[currentCircuitId] || CIRCUITS['au-1953'];
   map = new window.maplibregl.Map({
     container: 'map3d',
     center: initial.center,
@@ -468,9 +470,7 @@ function initMap() {
   });
 
   map.on('load', async () => {
-    const coords = await fetchCircuitGeoJSON('es-1991');
-    buildTrackSpline(coords);
-    renderTrackLayers();
+    await switchCircuit(currentCircuitId);
     syncCarMarkers();
     startRenderLoop();
     pollLiveServer();
@@ -508,7 +508,6 @@ function startRenderLoop() {
   requestAnimationFrame(tick);
 }
 
-// События интерфейса
 document.getElementById('burgerBtn')?.addEventListener('click', () => {
   document.getElementById('mainNav')?.classList.toggle('is-open');
 });
