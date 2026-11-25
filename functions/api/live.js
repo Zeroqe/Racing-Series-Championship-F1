@@ -30,20 +30,20 @@ function cleanTimingValue(val) {
   return s;
 }
 
-async function fetchJson(url, extraHeaders = {}, timeoutMs = 4500) {
+async function fetchJson(url, timeoutMs = 7000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; RCSF1-Telemetry/1.0)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         Accept: 'application/json, text/plain, */*',
-        ...extraHeaders,
       },
     });
     if (!res.ok) return null;
-    return await res.json();
+    const text = await res.text();
+    return JSON.parse(text);
   } catch {
     return null;
   } finally {
@@ -58,9 +58,9 @@ function extractActiveDrivers(liveJson) {
     .filter((p) => {
       if (!p || typeof p !== 'object' || !p.name) return false;
       const car = p.car || {};
-      const isGone = String(car.status || '').toLowerCase() === 'gone';
-      const isActive = Boolean(car.onMap) || Boolean(car.moving) || Number(car.speed || 0) > 0;
-      return !isGone && isActive;
+      const status = String(car.status || '').toLowerCase();
+      if (status === 'gone') return false;
+      return Boolean(car.onMap) || Boolean(car.moving) || Number(car.speed || 0) > 0;
     })
     .map((p, idx) => {
       const car = p.car || {};
@@ -91,13 +91,9 @@ function extractActiveDrivers(liveJson) {
     });
 }
 
-export async function onRequestGet(context) {
-  const cookieHeader = context?.env?.ACSM_COOKIE ? { Cookie: context.env.ACSM_COOKIE } : {};
-
-  const [liveJson, info] = await Promise.all([
-    fetchJson(ACSM_LIVE_JSON_URL, cookieHeader),
-    fetchJson(AC_INFO_URL),
-  ]);
+export async function onRequestGet() {
+  const liveJson = await fetchJson(ACSM_LIVE_JSON_URL, 7000);
+  const info = liveJson ? null : await fetchJson(AC_INFO_URL, 2000);
 
   if (!liveJson && !info) {
     return new Response(
@@ -125,7 +121,11 @@ export async function onRequestGet(context) {
   const leagueCars = rawCars.filter((c) => typeof c === 'string' && c.toLowerCase().includes('f1_'));
 
   const isOnline = Boolean(liveJson?.online ?? liveJson?.running ?? Boolean(info));
-  const sessionRaw = liveJson?.name || liveJson?.type;
+  const sessionObj = liveJson?.session;
+  const sessionRaw =
+    (typeof sessionObj === 'object' && sessionObj !== null ? (sessionObj.name || sessionObj.type) : sessionObj) ||
+    liveJson?.type;
+
   const sessionType = sessionRaw
     ? String(sessionRaw).toUpperCase()
     : (SESSION_NAMES[info?.session] || 'PRACTICE');
