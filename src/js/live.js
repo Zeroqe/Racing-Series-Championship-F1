@@ -1,4 +1,6 @@
 import '../sass/style.scss';
+import { syncGlobalSettings } from './sheets-api.js';
+syncGlobalSettings();
 
 const CIRCUITS = {
   'au-1953': {

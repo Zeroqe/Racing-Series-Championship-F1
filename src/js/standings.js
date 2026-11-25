@@ -1,5 +1,7 @@
 import '../sass/style.scss';
 import { fetchSheetTab } from './sheets-api.js';
+import { fetchSheetTab, syncGlobalSettings } from './sheets-api.js';
+syncGlobalSettings();
 
 function posBadge(i) {
   const pos = i + 1;
