@@ -30,22 +30,31 @@ function cleanTimingValue(val) {
   return s;
 }
 
-async function fetchJson(url, timeoutMs = 7000) {
+async function fetchLiveJsonWithDiag(url, extraHeaders = {}, timeoutMs = 7000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
         Accept: 'application/json, text/plain, */*',
+        Referer: 'https://pl.assettohosting.com:60814/live',
+        Origin: 'https://pl.assettohosting.com:60814',
+        ...extraHeaders,
       },
     });
-    if (!res.ok) return null;
     const text = await res.text();
-    return JSON.parse(text);
-  } catch {
-    return null;
+    if (!res.ok) {
+      return { data: null, error: `HTTP ${res.status}: ${text.slice(0, 120)}` };
+    }
+    try {
+      return { data: JSON.parse(text), error: null };
+    } catch {
+      return { data: null, error: `Invalid JSON: ${text.slice(0, 120)}` };
+    }
+  } catch (err) {
+    return { data: null, error: err?.name === 'AbortError' ? 'Timeout' : String(err?.message || err) };
   } finally {
     clearTimeout(timer);
   }
@@ -91,9 +100,15 @@ function extractActiveDrivers(liveJson) {
     });
 }
 
-export async function onRequestGet() {
-  const liveJson = await fetchJson(ACSM_LIVE_JSON_URL, 7000);
-  const info = liveJson ? null : await fetchJson(AC_INFO_URL, 2000);
+export async function onRequestGet(context) {
+  const cookieHeader = context?.env?.ACSM_COOKIE ? { Cookie: context.env.ACSM_COOKIE } : {};
+  const { data: liveJson, error: liveError } = await fetchLiveJsonWithDiag(ACSM_LIVE_JSON_URL, cookieHeader, 7000);
+
+  let info = null;
+  if (!liveJson) {
+    const infoRes = await fetchLiveJsonWithDiag(AC_INFO_URL, {}, 2500);
+    info = infoRes.data;
+  }
 
   if (!liveJson && !info) {
     return new Response(
@@ -106,6 +121,7 @@ export async function onRequestGet() {
         maxClients: 19,
         cars: [],
         drivers: [],
+        debugError: liveError || 'Unreachable',
       }),
       {
         headers: {
