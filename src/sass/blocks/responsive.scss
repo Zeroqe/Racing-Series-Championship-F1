@@ -1,0 +1,205 @@
+/* Планшеты и небольшие ноутбуки (<= 1024px) */
+@media (max-width: 1024px) {
+    .live-telemetry-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .live-board {
+        grid-template-columns: 1fr;
+    }
+
+    .overview__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .live-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .live-side-panel {
+        height: auto;
+    }
+
+    .live-mini-tower__list {
+        max-height: 240px;
+    }
+}
+
+/* Планшеты и крупные смартфоны (<= 860px) */
+@media (max-width: 860px) {
+    .nav {
+        position: fixed;
+        top: 72px;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 16px 20px 24px;
+        background: rgba(11, 12, 14, 0.98);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        &.is-open {
+            display: flex;
+        }
+
+        &__link {
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+
+            &:hover,
+            &.is-active {
+                background: rgba(255, 255, 255, 0.06);
+            }
+        }
+    }
+
+    .burger {
+        display: inline-flex;
+    }
+
+    .calendar__head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .discord-cta__box {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 20px;
+        padding: 28px 24px;
+    }
+
+    .footer__inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+/* Смартфоны (<= 600px) */
+@media (max-width: 600px) {
+    .header__inner {
+        height: 64px;
+    }
+
+    .nav {
+        top: 64px;
+    }
+
+    .header__actions .btn {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+
+    .hero__buttons {
+        flex-direction: column;
+        width: 100%;
+
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .calendar__filters,
+    .rules-head-actions,
+    .live-controls {
+        width: 100%;
+
+        .filter-btn,
+        .btn {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+    }
+
+    .standings-section,
+    .rules-section,
+    .live-section {
+        padding: 36px 0 48px;
+    }
+
+    .standings-table {
+
+        th,
+        td {
+            padding: 12px 12px;
+            font-size: 0.85rem;
+        }
+
+        .col-pts {
+            width: 76px;
+            font-size: 1.1rem;
+        }
+    }
+
+    .rule-item {
+        flex-direction: column;
+        gap: 10px;
+        padding: 18px;
+    }
+
+    .spec-box {
+        padding: 18px;
+
+        &__list li {
+            flex-direction: column;
+            gap: 2px;
+
+            strong {
+                text-align: left;
+            }
+        }
+    }
+
+    .live-telemetry-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .live-canvas-wrap {
+        aspect-ratio: 4 / 3;
+    }
+
+    .live-map-shell {
+        height: 400px;
+    }
+
+    .map-hud--top-right {
+        top: auto;
+        bottom: 48px;
+        left: 14px;
+        right: auto;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .live-track-select {
+        width: 100%;
+    }
+}
+
+/* Узкие экраны (<= 380px) */
+@media (max-width: 380px) {
+    .points-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .logo__text {
+        font-size: 1.15rem;
+    }
+}

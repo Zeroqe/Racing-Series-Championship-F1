@@ -9,3 +9,8 @@
 @use "blocks/calendar";
 @use "blocks/quick-access";
 @use "blocks/footer";
+@use 'blocks/standings';
+@use 'blocks/rules';
+@use 'blocks/live';
+
+@use "blocks/responsive";

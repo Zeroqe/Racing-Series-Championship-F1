@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Таблица чемпионата — RCS F1 | Racing Series Championship</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <script type="module" src="/src/js/standings.js"></script>
+</head>
+
+<body>
+    <div class="ticker">
+        <div class="ticker__track">
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 РЕГИСТРАЦИЯ ОТКРЫТА: Вступай в наш Discord</span>
+            <span>🔧 СБОРКА: CSP / RSS Formula Hybrid 2018</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 РЕГИСТРАЦИЯ ОТКРЫТА: Вступай в наш Discord</span>
+            <span>🔧 СБОРКА: CSP / RSS Formula Hybrid 2018</span>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/index.html" class="logo">
+                <span class="logo__badge">AC</span>
+                <span class="logo__text">RCS <span>F1</span></span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <a href="/index.html#about" class="nav__link">О лиге</a>
+                <a href="/index.html#calendar" class="nav__link">Календарь</a>
+                <a href="rules.html" class="nav__link">Регламент и моды</a>
+                <a href="standings.html" class="nav__link is-active">Таблица очков</a>
+                <a href="live.html" class="nav__link">Live карта</a>
+            </nav>
+
+            <div class="header__actions">
+                <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--discord">
+                    Join Discord
+                </a>
+                <button class="burger" id="burgerBtn" aria-label="Открыть меню">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="standings-section">
+            <div class="container">
+                <div class="calendar__head">
+                    <div>
+                        <div class="hero__badge">SEASON 2026 · CHAMPIONSHIP</div>
+                        <h1 class="section-title">ТАБЛИЦА <span>ЧЕМПИОНАТА</span></h1>
+                        <p class="calendar__sub">
+                            Система очков: 25-18-15-12-10-8-6-4-2-1 (+1 за быстрый круг в топ-10)
+                        </p>
+                    </div>
+
+                    <!-- Используем родной класс filter-btn с главной страницы -->
+                    <div class="calendar__filters" id="standingsTabs">
+                        <button class="filter-btn is-active" data-tab="drivers">Личный зачёт</button>
+                        <button class="filter-btn" data-tab="constructors">Кубок конструкторов</button>
+                        <button class="filter-btn" data-tab="stewards">Решения стюардов</button>
+                    </div>
+                </div>
+
+                <!-- Личный зачёт -->
+                <div class="standings-panel is-active" id="panel-drivers">
+                    <div class="standings-wrap">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-pos">ПОЗ</th>
+                                    <th>ПИЛОТ</th>
+                                    <th>КОМАНДА</th>
+                                    <th class="col-num">ШТРАФЫ</th>
+                                    <th class="col-pts">ОЧКИ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="driversTbody">
+                                <tr>
+                                    <td colspan="5" class="standings-empty">Загрузка данных...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Кубок конструкторов -->
+                <div class="standings-panel" id="panel-constructors">
+                    <div class="standings-wrap">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-pos">ПОЗ</th>
+                                    <th>КОМАНДА</th>
+                                    <th class="col-pts">ОЧКИ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="constructorsTbody">
+                                <tr>
+                                    <td colspan="3" class="standings-empty">Загрузка данных...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Решения стюардов -->
+                <div class="standings-panel" id="panel-stewards">
+                    <div class="stewards-grid" id="stewardsList">
+                        <div class="standings-empty">Загрузка вердиктов...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="discord-cta">
+            <div class="container">
+                <div class="discord-cta__box">
+                    <div>
+                        <h2>Хочешь попасть в таблицу следующего этапа?</h2>
+                        <p>Выбери свободную команду в Discord и выходи на старт ближайшего Гран-при RCS F1.</p>
+                    </div>
+                    <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--white">
+                        Перейти в Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <a href="/index.html" class="logo">
+                    <span class="logo__badge">AC</span>
+                    <span class="logo__text">RCS <span>F1</span></span>
+                </a>
+                <p>Независимая сим-рейсинг лига в Assetto Corsa. Честная борьба на трассе каждый уик-энд.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Чемпионат</h4>
+                <a href="/index.html#calendar">Календарь 2026</a>
+                <a href="standings.html">Таблица чемпионата</a>
+                <a href="rules.html">Регламент и моды</a>
+            </div>
+            <div class="footer__links">
+                <h4>Сообщество</h4>
+                <a href="https://discord.com" target="_blank" rel="noopener">Discord сервер</a>
+                <a href="live.html">Live тайминг</a>
+            </div>
+        </div>
+        <div class="container footer__bottom">
+            <span>© 2026 Racing Series Championship F1. Not affiliated with Kunos Simulazioni.</span>
+        </div>
+    </footer>
+</body>
+
+</html>

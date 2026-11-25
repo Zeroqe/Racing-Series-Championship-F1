@@ -91,3 +91,84 @@ if (burgerBtn && mainNav) {
     link.addEventListener('click', () => mainNav.classList.remove('is-open'));
   });
 }
+
+export const LEAGUE_CONFIG = {
+  // Вставь сюда ID таблицы из адресной строки (между /d/ и /edit)
+  SHEET_ID: 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE',
+  DISCORD_INVITE: 'https://discord.gg/your-invite-code',
+  CACHE_TTL_MS: 2 * 60 * 1000, // кэш на 2 минуты
+};
+
+const DEMO_DATA = {
+  Drivers_Public: [
+    { driver: 'Alexey Voronov', team: 'Scuderia Rosso', penalty: 0, total: 68 },
+    { driver: 'Maxim Kovalenko', team: 'Silver Arrows GP', penalty: 0, total: 54 },
+    { driver: 'Dmitry Sokolov', team: 'Papaya Racing', penalty: 2, total: 43 },
+    { driver: 'Artem Belov', team: 'Scuderia Rosso', penalty: 0, total: 31 },
+    { driver: 'Nikita Morozov', team: 'Apex Motorsport', penalty: 5, total: 19 },
+  ],
+  Constructors: [
+    { team: 'Scuderia Rosso', total: 99 },
+    { team: 'Silver Arrows GP', total: 54 },
+    { team: 'Papaya Racing', total: 43 },
+    { team: 'Apex Motorsport', total: 19 },
+  ],
+  Stewards: [
+    {
+      round: 'Round 2 • Barcelona',
+      driver: 'Nikita Morozov',
+      reason: 'Пункт 4.2 — Выдавливание соперника за пределы трассы в Т1',
+      verdict: '+5 СЕК / -5 ОЧКОВ',
+    },
+    {
+      round: 'Round 1 • Melbourne',
+      driver: 'Dmitry Sokolov',
+      reason: 'Пункт 3.1 — Срезка шиканы с получением преимущества',
+      verdict: '-2 ОЧКА',
+    },
+  ],
+};
+
+export function isUsingDemoData() {
+  return !LEAGUE_CONFIG.SHEET_ID || LEAGUE_CONFIG.SHEET_ID === 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
+}
+
+export async function fetchSheetTab(tabName) {
+  if (isUsingDemoData()) {
+    return DEMO_DATA[tabName] || [];
+  }
+
+  const cacheKey = `rcs_sheet_${tabName}`;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    const { timestamp, rows } = JSON.parse(cached);
+    if (Date.now() - timestamp < LEAGUE_CONFIG.CACHE_TTL_MS) {
+      return rows;
+    }
+  }
+
+  const url = `https://docs.google.com/spreadsheets/d/${LEAGUE_CONFIG.SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Ошибка загрузки вкладки ${tabName}`);
+
+  const rawText = await res.text();
+  const jsonStart = rawText.indexOf('{');
+  const jsonEnd = rawText.lastIndexOf('}');
+  const parsed = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+
+  const cols = parsed.table.cols.map((c) => (c.label || '').trim().toLowerCase());
+  const rows = parsed.table.rows
+    .map((row) => {
+      const obj = {};
+      row.c.forEach((cell, idx) => {
+        const key = cols[idx];
+        if (!key) return;
+        obj[key] = cell ? (cell.v ?? '') : '';
+      });
+      return obj;
+    })
+    .filter((item) => Object.values(item).some((val) => val !== ''));
+
+  sessionStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), rows }));
+  return rows;
+}

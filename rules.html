@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регламент и моды — RCS F1 | Racing Series Championship</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <script type="module" src="/src/js/rules.js"></script>
+</head>
+
+<body>
+    <div class="ticker">
+        <div class="ticker__track">
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 БРИФИНГ: 19:00 · ПРАКТИКА: 19:30 · КВАЛА: СБ · ГОНКА: ВС</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 БРИФИНГ: 19:00 · ПРАКТИКА: 19:30 · КВАЛА: СБ · ГОНКА: ВС</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/index.html" class="logo">
+                <span class="logo__badge">AC</span>
+                <span class="logo__text">RCS <span>F1</span></span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <a href="/index.html#about" class="nav__link">О лиге</a>
+                <a href="/index.html#calendar" class="nav__link">Календарь</a>
+                <a href="rules.html" class="nav__link is-active">Регламент и моды</a>
+                <a href="standings.html" class="nav__link">Таблица очков</a>
+                <a href="live.html" class="nav__link">Live карта</a>
+            </nav>
+
+            <div class="header__actions">
+                <a href="https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814" target="_blank"
+                    rel="noopener" class="btn btn--primary">
+                    Зайти на сервер
+                </a>
+                <button class="burger" id="burgerBtn" aria-label="Открыть меню">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Секция 1: Моды и необходимое -->
+        <section class="rules-section" id="mods">
+            <div class="container">
+                <div class="calendar__head">
+                    <div>
+                        <div class="hero__badge">REQUIRED CONTENT · SUZQ F1 2018</div>
+                        <h1 class="section-title">ПАК МОДОВ <span>И НЕОБХОДИМОЕ</span></h1>
+                        <p class="calendar__sub">
+                            Все файлы собраны в общей папке Google Диска. Перед выходом на сервер проверь версии CSP,
+                            Sol и установку S2-версий болидов.
+                        </p>
+                    </div>
+                    <div class="rules-head-actions">
+                        <a href="https://drive.google.com/drive/folders/1MNlYGzp9nFQhwj7lxi-SsCwU_rKGudQl?usp=drive_link"
+                            target="_blank" rel="noopener" class="btn btn--primary">
+                            Открыть Google Диск с модами
+                        </a>
+                        <a href="https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814" target="_blank"
+                            rel="noopener" class="btn btn--outline">
+                            Подключиться (CM)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mods-grid">
+                    <article class="mod-card">
+                        <div class="mod-card__top">
+                            <span class="mod-card__tag mod-card__tag--req">ОБЯЗАТЕЛЬНО</span>
+                            <span class="mod-card__ver">ТОЛЬКО S2 ВЕРСИЯ</span>
+                        </div>
+                        <h3 class="mod-card__title">Болиды SuzQ F1 2018</h3>
+                        <p class="mod-card__desc">
+                            Ferrari SF71H, Mercedes W09, Red Bull RB14, McLaren MCL33, Renault RS18, Force India VJM11,
+                            Haas VF-18, Sauber C37, Toro Rosso STR13, Williams FW41.
+                        </p>
+                        <a href="https://drive.google.com/drive/folders/1MNlYGzp9nFQhwj7lxi-SsCwU_rKGudQl?usp=drive_link"
+                            target="_blank" rel="noopener" class="btn btn--outline btn--full">
+                            Скачать папку car
+                        </a>
+                    </article>
+
+                    <article class="mod-card">
+                        <div class="mod-card__top">
+                            <span class="mod-card__tag mod-card__tag--req">ОБЯЗАТЕЛЬНО</span>
+                            <span class="mod-card__ver">10 трасс сезона</span>
+                        </div>
+                        <h3 class="mod-card__title">Пак трасс чемпионата</h3>
+                        <p class="mod-card__desc">
+                            Официальные трассы календаря из папки <code>track</code> на Google Диске с нужными
+                            конфигурациями и сетками пит-боксов.
+                        </p>
+                        <a href="https://drive.google.com/drive/folders/1MNlYGzp9nFQhwj7lxi-SsCwU_rKGudQl?usp=drive_link"
+                            target="_blank" rel="noopener" class="btn btn--outline btn--full">
+                            Скачать папку track
+                        </a>
+                    </article>
+
+                    <article class="mod-card">
+                        <div class="mod-card__top">
+                            <span class="mod-card__tag mod-card__tag--req">ОБЯЗАТЕЛЬНО</span>
+                            <span class="mod-card__ver">v0.3.2-preview2</span>
+                        </div>
+                        <h3 class="mod-card__title">Custom Shaders Patch</h3>
+                        <p class="mod-card__desc">
+                            Архив <code>lights-patch-v0.3.2-preview2.zip</code> с Диска лиги для корректной работы
+                            физики, света и синхронизации погоды.
+                        </p>
+                        <a href="https://drive.google.com/drive/folders/1MNlYGzp9nFQhwj7lxi-SsCwU_rKGudQl?usp=drive_link"
+                            target="_blank" rel="noopener" class="btn btn--outline btn--full">
+                            Скачать CSP
+                        </a>
+                    </article>
+
+                    <article class="mod-card">
+                        <div class="mod-card__top">
+                            <span class="mod-card__tag mod-card__tag--req">ОБЯЗАТЕЛЬНО</span>
+                            <span class="mod-card__ver">v2.2.9</span>
+                        </div>
+                        <h3 class="mod-card__title">Погодный мод Sol 2.2.9</h3>
+                        <p class="mod-card__desc">
+                            Архив <code>Sol 2.2.9.7z</code> для работы смены суток и динамических погодных условий на
+                            сервере RCS F1.
+                        </p>
+                        <a href="https://drive.google.com/drive/folders/1MNlYGzp9nFQhwj7lxi-SsCwU_rKGudQl?usp=drive_link"
+                            target="_blank" rel="noopener" class="btn btn--outline btn--full">
+                            Скачать Sol 2.2.9
+                        </a>
+                    </article>
+                </div>
+
+                <div class="install-bar">
+                    <span class="install-bar__badge">ВАЖНО ПРИ УСТАНОВКЕ</span>
+                    <p>
+                        Открывай папку каждой машины от SuzQ и закидывай в Content Manager <strong>ПО ОТДЕЛЬНОСТИ только
+                            S2-версию</strong> болида (иначе сервер не пустит по чексумме).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция 2: Регламент лиги -->
+        <section class="rules-section rules-section--alt" id="regulations">
+            <div class="container">
+                <div class="calendar__head">
+                    <div>
+                        <div class="hero__badge">SPORTING CODE · FIA RCS</div>
+                        <h2 class="section-title">ОФИЦИАЛЬНЫЙ <span>РЕГЛАМЕНТ</span></h2>
+                        <p class="calendar__sub">
+                            Краткая выжимка правил поведения на трассе, допусков и спецрежимов. Полный текст доступен в
+                            Google Документе.
+                        </p>
+                    </div>
+                    <a href="https://docs.google.com/document/d/1GJFS49giTHRA87GZBwtKy_KgfUsj0viDMGqX3rMxnG4/edit?usp=sharing"
+                        target="_blank" rel="noopener" class="btn btn--outline">
+                        Открыть полный регламент (Docs)
+                    </a>
+                </div>
+
+                <div class="rules-layout">
+                    <!-- Левая колонка: Основные пункты -->
+                    <div class="rules-list">
+                        <div class="rule-item">
+                            <span class="rule-item__num">01</span>
+                            <div>
+                                <h3>Допуск к гонкам и настройки интерфейса</h3>
+                                <ul class="rule-bullets">
+                                    <li>В Content Manager в графе никнейма прописывается <strong>ТОЛЬКО фамилия</strong>
+                                        пилота.</li>
+                                    <li>Каждый пилот обязан предварительно получить <strong>суперлицензию</strong>.</li>
+                                    <li>Обязательно включены: <strong>радар</strong>, <strong>виртуальное зеркало
+                                            заднего вида (F11)</strong> и <strong>общий игровой чат</strong> (туда
+                                        дублируются команды SC, синие флаги и сообщения судей).</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <span class="rule-item__num">02</span>
+                            <div>
+                                <h3>Формат уик-энда и командная связь</h3>
+                                <ul class="rule-bullets">
+                                    <li><strong>Суббота</strong> — квалификация; <strong>Воскресенье</strong> — основная
+                                        гонка.</li>
+                                    <li>В день заезда: <strong>19:00</strong> — обязательный сбор всех пилотов на
+                                        брифинг в Discord, <strong>19:30</strong> — старт первой практики.</li>
+                                    <li>Во время гонки пилоты сидят строго в <strong>голосовом канале своей
+                                            команды</strong> (вход в общий войс запрещён). У каждой команды может быть 1
+                                        гоночный инженер.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <span class="rule-item__num">03</span>
+                            <div>
+                                <h3>Борьба на трассе, DRS и границы трека</h3>
+                                <ul class="rule-bullets">
+                                    <li><strong>DRS:</strong> активируется со 2-го круга при отставании от соперника ≤
+                                        1.0 сек.</li>
+                                    <li><strong>Оборона:</strong> не более 3 смен траектории на прямой в зоне атаки
+                                        (+0.500 сек). Смещение в зоне торможения запрещено; обороняющийся обязан
+                                        оставлять минимум 1 корпус места.</li>
+                                    <li><strong>Track Limits и синие флаги:</strong> выезд 4 колёсами за белую линию для
+                                        получения преимущества и обгон вне трассы наказываются. Круговой обязан
+                                        пропустить более быстрый болид по синему флагу.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <span class="rule-item__num">04</span>
+                            <div>
+                                <h3>Пит-лейн, резина и топливо</h3>
+                                <ul class="rule-bullets">
+                                    <li>В гонке обязательно использовать <strong>два разных комплекта шин</strong>
+                                        (кроме дождевых гонок).</li>
+                                    <li><strong>Дозаправки в процессе гонки строго запрещены.</strong></li>
+                                    <li>Ограничение скорости до въезда на пит-лейн — <strong>80 км/ч</strong>
+                                        (превышение — штраф от +5 сек).</li>
+                                    <li>На выезде с пит-лейна запрещено обгонять пилотов, которые впереди создают отрыв
+                                        перед быстрым кругом.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правая колонка: Сервер, очки и штрафы -->
+                    <aside class="rules-sidebar">
+                        <div class="spec-box">
+                            <h3 class="spec-box__title">Сервер и уик-энд</h3>
+                            <ul class="spec-box__list">
+                                <li><span>IP сервера:</span> <strong>51.77.43.82:18814</strong></li>
+                                <li><span>Квалификация:</span> <strong>Суббота</strong></li>
+                                <li><span>Гонка:</span> <strong>Воскресенье</strong></li>
+                                <li><span>Брифинг / Практика:</span> <strong>19:00 / 19:30</strong></li>
+                                <li><span>Компл. резины:</span> <strong>Мин. 2 типа</strong></li>
+                                <li><span>Дозаправки:</span> <strong>Запрещены</strong></li>
+                                <li><span>Лимит пит-лейн:</span> <strong>80 км/ч</strong></li>
+                            </ul>
+                            <a href="https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814"
+                                target="_blank" rel="noopener" class="btn btn--primary btn--full spec-box__cta">
+                                Войти через Content Manager
+                            </a>
+                        </div>
+
+                        <div class="spec-box">
+                            <h3 class="spec-box__title">Система начисления очков</h3>
+                            <div class="points-grid">
+                                <div><span>1 место</span><strong>25</strong></div>
+                                <div><span>6 место</span><strong>8</strong></div>
+                                <div><span>2 место</span><strong>18</strong></div>
+                                <div><span>7 место</span><strong>6</strong></div>
+                                <div><span>3 место</span><strong>15</strong></div>
+                                <div><span>8 место</span><strong>4</strong></div>
+                                <div><span>4 место</span><strong>12</strong></div>
+                                <div><span>9 место</span><strong>2</strong></div>
+                                <div><span>5 место</span><strong>10</strong></div>
+                                <div><span>10 место</span><strong>1</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="spec-box">
+                            <h3 class="spec-box__title">Штрафы и протесты</h3>
+                            <p class="spec-box__text">
+                                Протесты подаются судьям с <strong>видеоподтверждением</strong> и ссылкой на пункт
+                                правил. Возможные санкции: <strong>+5, +10, +15, +20 сек</strong> к итоговому времени,
+                                проезд по пит-лейну или дисквалификация.
+                            </p>
+                        </div>
+                    </aside>
+                </div>
+
+                <!-- 4 карточки спецрежимов на всю ширину контейнера -->
+                <div class="special-modes-grid">
+                    <div class="mode-box">
+                        <div class="mode-box__head">
+                            <span class="mode-dot mode-dot--green"></span>
+                            <h4>Прогревочный круг</h4>
+                        </div>
+                        <p>Макс. скорость <strong>120 км/ч</strong>. Дистанция от 10 м (2 корпуса) до 50 м для прогрева
+                            шин. Обгоны запрещены (кроме остановившихся авто).</p>
+                    </div>
+
+                    <div class="mode-box">
+                        <div class="mode-box__head">
+                            <span class="mode-dot mode-dot--yellow"></span>
+                            <h4>Safety Car (SC)</h4>
+                        </div>
+                        <p>Скорость до <strong>150 км/ч</strong>, дистанция 2–3 корпуса, 3–4 круга. Круговые обгоняют SC
+                            только по зелёному сигналу/смещению вправо. Перед рестартом лидер сбрасывает до <strong>50
+                                км/ч</strong>.</p>
+                    </div>
+
+                    <div class="mode-box">
+                        <div class="mode-box__head">
+                            <span class="mode-dot mode-dot--yellow"></span>
+                            <h4>Virtual Safety Car (VSC)</h4>
+                        </div>
+                        <p>Дельта всегда в плюсе, скорость <strong>60–180 км/ч</strong>, дистанция 1.5–2 корпуса. Резкие
+                            торможения и обгоны запрещены (штраф 5–10 сек).</p>
+                    </div>
+
+                    <div class="mode-box">
+                        <div class="mode-box__head">
+                            <span class="mode-dot mode-dot--red"></span>
+                            <h4>Красный флаг</h4>
+                        </div>
+                        <p>Повреждённые болиды чинятся и встают на выезде с пит-лейна рядом с SC на свою позицию до
+                            аварии; целые машины ждут отмашки в питах.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="discord-cta">
+            <div class="container">
+                <div class="discord-cta__box">
+                    <div>
+                        <h2>Готов получить суперлицензию и выйти на старт?</h2>
+                        <p>Заходи в Discord, скачивай S2-версии болидов от SuzQ и подключайся к тренировочному серверу.
+                        </p>
+                    </div>
+                    <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--white">
+                        Перейти в Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <a href="/index.html" class="logo">
+                    <span class="logo__badge">AC</span>
+                    <span class="logo__text">RCS <span>F1</span></span>
+                </a>
+                <p>Независимая сим-рейсинг лига в Assetto Corsa. Честная борьба на трассе каждый уик-энд.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Чемпионат</h4>
+                <a href="/index.html#calendar">Календарь 2026</a>
+                <a href="standings.html">Таблица чемпионата</a>
+                <a href="rules.html">Регламент и моды</a>
+            </div>
+            <div class="footer__links">
+                <h4>Сообщество</h4>
+                <a href="https://discord.com" target="_blank" rel="noopener">Discord сервер</a>
+                <a href="live.html">Live тайминг</a>
+            </div>
+        </div>
+        <div class="container footer__bottom">
+            <span>© 2026 Racing Series Championship F1. Not affiliated with Kunos Simulazioni.</span>
+        </div>
+    </footer>
+</body>
+
+</html>

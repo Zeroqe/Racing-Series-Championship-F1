@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live 3D карта и тайминг — RCS F1 | Racing Series Championship</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <!-- MapLibre GL JS для 3D спутниковой карты -->
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script type="module" src="/src/js/live.js"></script>
+</head>
+
+<body>
+    <div class="ticker">
+        <div class="ticker__track">
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 ЭТАП 2: Каталунья — 28–29 ноября (Сб Q / Вс R)</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 ЭТАП 2: Каталунья — 28–29 ноября (Сб Q / Вс R)</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/index.html" class="logo">
+                <span class="logo__badge">AC</span>
+                <span class="logo__text">RCS <span>F1</span></span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <a href="/index.html#about" class="nav__link">О лиге</a>
+                <a href="/index.html#calendar" class="nav__link">Календарь</a>
+                <a href="rules.html" class="nav__link">Регламент и моды</a>
+                <a href="standings.html" class="nav__link">Таблица очков</a>
+                <a href="live.html" class="nav__link is-active">Live карта</a>
+            </nav>
+
+            <div class="header__actions">
+                <a href="https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814" target="_blank"
+                    rel="noopener" class="btn btn--primary">
+                    Зайти на сервер
+                </a>
+                <button class="burger" id="burgerBtn" aria-label="Открыть меню">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="live-section">
+            <div class="container">
+                <div class="calendar__head">
+                    <div>
+                        <div class="hero__badge">LIVE 3D TELEMETRY · 51.77.43.82:18814</div>
+                        <h1 class="section-title">LIVE 3D КАРТА <span>И ТАЙМИНГ</span></h1>
+                        <p class="calendar__sub">
+                            Крути карту мышкой (ПКМ — наклон и поворот в 3D), переключай этапы сезона или кликай по
+                            пилоту, чтобы следить за ним.
+                        </p>
+                    </div>
+
+                    <div class="live-controls">
+                        <select id="trackSelect" class="live-track-select" aria-label="Выбор трассы чемпионата">
+                            <option value="es-1991" selected>Этап 02 · Каталунья (Испания)</option>
+                            <option value="bh-2002">Этап 01 · Бахрейн (Сахир)</option>
+                            <option value="ca-1978">Этап 03 · Монреаль (Канада)</option>
+                            <option value="at-1969">Этап 04 · Шпильберг (Австрия)</option>
+                            <option value="gb-1948">Этап 05 · Сильверстоун (Великобритания)</option>
+                            <option value="de-1932">Этап 06 · Хоккенхаймринг (Германия)</option>
+                            <option value="be-1925">Этап 07 · Спа-Франкоршам (Бельгия)</option>
+                            <option value="ru-2014">Этап 08 · Сочи Автодром (Россия)</option>
+                            <option value="us-2012">Этап 09 · Остин COTA (США)</option>
+                            <option value="ae-2009">Этап 10 · Абу-Даби (Яс Марина)</option>
+                        </select>
+                        <button class="filter-btn is-active" id="toggleLabelsBtn" type="button">Фамилии: ВКЛ</button>
+                    </div>
+                </div>
+
+                <!-- Основной блок: 3D карта + правая панель сервера -->
+                <div class="live-workspace" id="liveWorkspace">
+                    <div class="live-map-shell">
+                        <!-- Контейнер MapLibre 3D -->
+                        <div id="map3d" class="live-map-canvas"></div>
+
+                        <!-- Верхняя левая панель управления камерой (3D / Сверху / За лидером) -->
+                        <div class="map-hud map-hud--top-left">
+                            <button type="button" class="map-cam-btn is-active" id="btnCam3D">3D</button>
+                            <button type="button" class="map-cam-btn" id="btnCamTop">Сверху</button>
+                            <button type="button" class="map-cam-btn" id="btnCamFollow">За лидером</button>
+                        </div>
+
+                        <!-- Верхняя правая панель: ТВ режим и название трассы -->
+                        <div class="map-hud map-hud--top-right">
+                            <button type="button" class="map-tv-btn" id="btnFullscreen">⛶ На весь экран · ТВ</button>
+                            <div class="map-track-info">
+                                <strong id="hudTrackName">Circuit de Barcelona-Catalunya</strong>
+                                <span id="hudTrackMeta">4,657 км · 16 поворотов · SuzQ F1 2018</span>
+                            </div>
+                        </div>
+
+                        <!-- Нижняя левая легенда секторов -->
+                        <div class="map-hud map-hud--bottom-left">
+                            <span><i class="sec-dot sec-dot--s1"></i> S1</span>
+                            <span><i class="sec-dot sec-dot--s2"></i> S2</span>
+                            <span><i class="sec-dot sec-dot--s3"></i> S3</span>
+                            <span class="map-hud__sep">·</span>
+                            <span id="hudFocusLabel">Камера: Свободная</span>
+                        </div>
+                    </div>
+
+                    <!-- Правая колонка: Статус сервера и мини-башня позиций -->
+                    <aside class="live-side-panel">
+                        <div class="live-server-box">
+                            <div class="live-server-box__status">
+                                <span class="pulse-dot"></span>
+                                <span>СЕРВЕР RCS F1 · ONLINE</span>
+                            </div>
+                            <p class="live-server-box__desc">
+                                Демо-симуляция пелотона F1 2018. На этапе бэкенда сюда пойдёт живой поток с
+                                <code>51.77.43.82:18814</code>.
+                            </p>
+                            <a href="https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814"
+                                target="_blank" rel="noopener" class="btn btn--primary btn--full">
+                                ПОДКЛЮЧИТЬСЯ
+                            </a>
+                        </div>
+
+                        <div class="live-mini-tower">
+                            <div class="live-mini-tower__head">
+                                <span>ПОЗИЦИИ</span>
+                                <span id="liveActiveCount">10 на трассе</span>
+                            </div>
+                            <div class="live-mini-tower__list" id="miniTowerList"></div>
+                        </div>
+                    </aside>
+                </div>
+
+                <!-- Нижняя полноширинная таблица телеметрии (как на скрине) -->
+                <div class="live-full-timing">
+                    <div class="live-full-timing__wrap">
+                        <table class="live-full-table">
+                            <thead>
+                                <tr>
+                                    <th>P</th>
+                                    <th>ПИЛОТ</th>
+                                    <th>КОМАНДА</th>
+                                    <th>КРУГ</th>
+                                    <th>ЛУЧШИЙ</th>
+                                    <th>ПОСЛЕДНИЙ</th>
+                                    <th>S1</th>
+                                    <th>S2</th>
+                                    <th>S3</th>
+                                    <th>ОТРЫВ</th>
+                                    <th>СКОР.</th>
+                                    <th>ШИНЫ</th>
+                                    <th>СТАТУС</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fullTimingBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="discord-cta">
+            <div class="container">
+                <div class="discord-cta__box">
+                    <div>
+                        <h2>Готов выйти на старт следующего Гран-при?</h2>
+                        <p>Заходи в Discord, скачивай S2-версии болидов SuzQ F1 2018 и подключайся к тренировочному
+                            серверу.</p>
+                    </div>
+                    <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--white">
+                        Перейти в Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <a href="/index.html" class="logo">
+                    <span class="logo__badge">AC</span>
+                    <span class="logo__text">RCS <span>F1</span></span>
+                </a>
+                <p>Независимая сим-рейсинг лига в Assetto Corsa. Честная борьба на трассе каждый уик-энд.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Чемпионат</h4>
+                <a href="/index.html#calendar">Календарь 2026</a>
+                <a href="standings.html">Таблица чемпионата</a>
+                <a href="rules.html">Регламент и моды</a>
+            </div>
+            <div class="footer__links">
+                <h4>Сообщество</h4>
+                <a href="https://discord.com" target="_blank" rel="noopener">Discord сервер</a>
+                <a href="live.html">Live тайминг</a>
+            </div>
+        </div>
+        <div class="container footer__bottom">
+            <span>© 2026 Racing Series Championship F1. Not affiliated with Kunos Simulazioni.</span>
+        </div>
+    </footer>
+</body>
+
+</html>
