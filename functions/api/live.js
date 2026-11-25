@@ -1,5 +1,5 @@
-const AC_INFO_URL = 'http://51.77.43.82:18814/INFO';
 const ACSM_LIVE_JSON_URL = 'https://pl.assettohosting.com:60814/live.json';
+const AC_INFO_URL = 'http://51.77.43.82:18814/INFO';
 
 const SESSION_NAMES = {
   0: 'BOOKING / LOBBY',
@@ -7,21 +7,6 @@ const SESSION_NAMES = {
   2: 'QUALIFYING',
   3: 'RACE',
 };
-
-function formatLapTime(ms) {
-  if (!ms || ms <= 0 || ms > 3600000) return '—';
-  const mins = Math.floor(ms / 60000);
-  const secs = Math.floor((ms % 60000) / 1000);
-  const millis = Math.floor(ms % 1000);
-  return `${mins}:${String(secs).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
-}
-
-function formatSectorTime(ms) {
-  if (!ms || ms <= 0 || ms > 600000) return '—';
-  const secs = Math.floor(ms / 1000);
-  const millis = Math.floor(ms % 1000);
-  return `${secs}.${String(millis).padStart(3, '0')}`;
-}
 
 function mapCarToTeam(carModel = '') {
   const m = String(carModel).toLowerCase();
@@ -38,7 +23,14 @@ function mapCarToTeam(carModel = '') {
   return { team: 'RCS F1', color: '#ff2a2a' };
 }
 
-async function fetchJson(url, extraHeaders = {}, timeoutMs = 4000) {
+function cleanTimingValue(val) {
+  if (val === undefined || val === null) return '—';
+  const s = String(val).trim();
+  if (!s || s === '0' || s === '0:00.000' || s === '-' || s === '—') return '—';
+  return s;
+}
+
+async function fetchJson(url, extraHeaders = {}, timeoutMs = 4500) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -46,7 +38,7 @@ async function fetchJson(url, extraHeaders = {}, timeoutMs = 4000) {
       signal: controller.signal,
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; RCSF1-Telemetry/1.0)',
-        Accept: 'application/json',
+        Accept: 'application/json, text/plain, */*',
         ...extraHeaders,
       },
     });
@@ -59,67 +51,42 @@ async function fetchJson(url, extraHeaders = {}, timeoutMs = 4000) {
   }
 }
 
-function extractDrivers(liveJson) {
-  if (!liveJson || typeof liveJson !== 'object') return [];
+function extractActiveDrivers(liveJson) {
+  const players = Array.isArray(liveJson?.players) ? liveJson.players : [];
 
-  const candidate =
-    liveJson.drivers ||
-    liveJson.Drivers ||
-    liveJson.cars ||
-    liveJson.Cars ||
-    liveJson.players ||
-    liveJson.Players ||
-    liveJson.ConnectedDrivers ||
-    [];
-
-  const list = Array.isArray(candidate)
-    ? candidate
-    : typeof candidate === 'object' && candidate !== null
-      ? Object.values(candidate)
-      : [];
-
-  return list
-    .filter((item) => {
-      if (!item || typeof item !== 'object') return false;
-      const name = item.name || item.DriverName || item.driver || item.Name || item.CarInfo?.DriverName;
-      const connected = item.connected ?? item.Connected ?? item.isConnected ?? true;
-      return Boolean(name) && connected !== false;
+  return players
+    .filter((p) => {
+      if (!p || typeof p !== 'object' || !p.name) return false;
+      const car = p.car || {};
+      const isGone = String(car.status || '').toLowerCase() === 'gone';
+      const isActive = Boolean(car.onMap) || Boolean(car.moving) || Number(car.speed || 0) > 0;
+      return !isGone && isActive;
     })
-    .map((item, idx) => {
-      const name = String(item.name || item.DriverName || item.driver || item.Name || item.CarInfo?.DriverName || `Driver ${idx + 1}`).trim();
-      const model = String(item.car || item.CarModel || item.carModel || item.Model || item.CarInfo?.CarModel || '');
+    .map((p, idx) => {
+      const car = p.car || {};
+      const name = String(p.name).trim();
+      const model = String(car.model || car.modelName || p.model || '');
       const { team, color } = mapCarToTeam(model);
+      const sectors = Array.isArray(car.sectors) ? car.sectors : [];
 
-      const rawProgress =
-        item.progress ??
-        item.spline ??
-        item.SplinePosition ??
-        item.NormalizedSplinePosition ??
-        item.NormalisedSplinePosition ??
-        item.pos ??
-        0;
-      const progressNum = Number(rawProgress);
-      const progress = Number.isFinite(progressNum)
-        ? (progressNum > 1 ? progressNum / 100 : progressNum)
-        : 0;
-
-      const splits = item.splits || item.LastLapSplits || item.CurrentLapSplits || item.Splits || [];
+      const rawProg = Number(car.progress ?? 0);
+      const progress = Number.isFinite(rawProg) ? (rawProg > 1 ? rawProg / 100 : rawProg) : 0;
 
       return {
-        id: `${name.toLowerCase().replace(/\s+/g, '_')}_${idx}`,
+        id: `${name.toLowerCase().replace(/\s+/g, '_')}_${p.id ?? idx}`,
         name,
         team,
         color,
-        lap: Number(item.lap ?? item.LapCount ?? item.NumLaps ?? item.Laps ?? 0),
+        lap: Number(car.laps ?? 0),
         progress,
-        best: typeof item.best === 'string' ? item.best : formatLapTime(item.BestLap ?? item.bestLap),
-        last: typeof item.last === 'string' ? item.last : formatLapTime(item.LastLap ?? item.lastLap),
-        s1: typeof item.s1 === 'string' ? item.s1 : formatSectorTime(item.S1 ?? splits[0]),
-        s2: typeof item.s2 === 'string' ? item.s2 : formatSectorTime(item.S2 ?? splits[1]),
-        s3: typeof item.s3 === 'string' ? item.s3 : formatSectorTime(item.S3 ?? splits[2]),
-        kmh: Math.round(Number(item.kmh ?? item.speed ?? item.SpeedKmh ?? item.Speed ?? 0)),
-        tyre: String(item.tyre ?? item.TyreCompound ?? item.Tyres ?? 'S').slice(0, 1).toUpperCase(),
-        inPit: Boolean(item.inPit ?? item.IsInPit ?? item.InPitLane ?? item.InPit ?? false),
+        best: cleanTimingValue(car.bestLap),
+        last: cleanTimingValue(car.lastLap),
+        s1: cleanTimingValue(sectors[0]),
+        s2: cleanTimingValue(sectors[1]),
+        s3: cleanTimingValue(sectors[2]),
+        kmh: Math.round(Number(car.speed ?? 0)),
+        tyre: 'W',
+        inPit: !Boolean(car.onMap),
       };
     });
 }
@@ -127,12 +94,12 @@ function extractDrivers(liveJson) {
 export async function onRequestGet(context) {
   const cookieHeader = context?.env?.ACSM_COOKIE ? { Cookie: context.env.ACSM_COOKIE } : {};
 
-  const [info, liveJson] = await Promise.all([
-    fetchJson(AC_INFO_URL),
+  const [liveJson, info] = await Promise.all([
     fetchJson(ACSM_LIVE_JSON_URL, cookieHeader),
+    fetchJson(AC_INFO_URL),
   ]);
 
-  if (!info && !liveJson) {
+  if (!liveJson && !info) {
     return new Response(
       JSON.stringify({
         online: false,
@@ -153,27 +120,28 @@ export async function onRequestGet(context) {
     );
   }
 
-  const drivers = extractDrivers(liveJson);
+  const drivers = extractActiveDrivers(liveJson);
   const rawCars = Array.isArray(info?.cars) ? info.cars : [];
   const leagueCars = rawCars.filter((c) => typeof c === 'string' && c.toLowerCase().includes('f1_'));
 
-  const sessionVal = liveJson?.session ?? liveJson?.sessionType ?? info?.session;
-  const sessionType =
-    typeof sessionVal === 'string'
-      ? sessionVal.toUpperCase()
-      : SESSION_NAMES[sessionVal] || 'PRACTICE';
+  const isOnline = Boolean(liveJson?.online ?? liveJson?.running ?? Boolean(info));
+  const sessionRaw = liveJson?.name || liveJson?.type;
+  const sessionType = sessionRaw
+    ? String(sessionRaw).toUpperCase()
+    : (SESSION_NAMES[info?.session] || 'PRACTICE');
 
   const clients = Number(
     drivers.length > 0
       ? drivers.length
-      : (liveJson?.clients ?? liveJson?.playersCount ?? info?.clients ?? 0)
+      : (liveJson?.clients ?? info?.clients ?? 0)
   );
-  const maxClients = Number(liveJson?.maxClients ?? liveJson?.maxclients ?? info?.maxclients ?? 19);
+  const maxClients = Number(liveJson?.slots ?? info?.maxclients ?? 19);
 
   const payload = {
-    online: true,
-    serverName: liveJson?.serverName || info?.name || 'RSC F1 2018',
-    trackRaw: liveJson?.track || info?.track || '',
+    online: isOnline,
+    serverName: info?.name || 'RSC F1 2018',
+    trackRaw: liveJson?.trackName || liveJson?.track || info?.track || '',
+    weatherName: liveJson?.weatherName || '',
     sessionType,
     clients,
     maxClients,
