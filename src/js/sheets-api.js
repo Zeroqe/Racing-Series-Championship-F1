@@ -4,6 +4,7 @@ export const LEAGUE_CONFIG = {
   SETTINGS_TAB: 'Settings',
   DISCORD_INVITE: 'https://discord.com',
   SERVER_JOIN_URL: 'https://acstuff.ru/s/q:race/online/join?ip=51.77.43.82&httpPort=18814',
+  HALL_OF_FAME_TAB: 'HallOfFame',
   CACHE_TTL_MS: 15 * 1000, // 15 секунд, чтобы правки в таблице применялись почти сразу
 };
 

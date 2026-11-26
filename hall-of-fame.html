@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Зал славы — RCS F1 | Racing Series Championship</title>
+    <link rel="icon" type="image/png" href="src/logo/logo.png" />
+    <link rel="shortcut icon" href="src/logo/logo.png" />
+    <link rel="apple-touch-icon" href="src/logo/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <script type="module" src="/src/js/hall-of-fame.js"></script>
+</head>
+
+<body>
+    <div class="ticker">
+        <div class="ticker__track">
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 ЭТАП 1: Австралия (дождевая) — 27 ноября (пт, вечер)</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+            <span>🟢 СЕРВЕР ОНЛАЙН: Практика RCS F1</span>
+            <span>🏆 ЧЕМПИОНАТ: Racing Series Championship F1</span>
+            <span>📅 ЭТАП 1: Австралия (дождевая) — 27 ноября (пт, вечер)</span>
+            <span>🔧 СБОРКА: SuzQ F1 2018 (S2) / CSP 0.3.2-preview2 / Sol 2.2.9</span>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/index.html" class="logo">
+                <span class="logo__badge">AC</span>
+                <span class="logo__text">RCS <span>F1</span></span>
+            </a>
+
+            <nav class="nav" id="mainNav">
+                <a href="/index.html#about" class="nav__link">О лиге</a>
+                <a href="/index.html#calendar" class="nav__link">Календарь</a>
+                <a href="rules.html" class="nav__link">Регламент и моды</a>
+                <a href="standings.html" class="nav__link">Таблица очков</a>
+                <a href="hall-of-fame.html" class="nav__link">Зал славы</a>
+                <a href="live.html" class="nav__link">Live карта</a>
+            </nav>
+
+            <div class="header__actions">
+                <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--discord">
+                    Join Discord
+                </a>
+                <button class="burger" id="burgerBtn" aria-label="Открыть меню">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="standings-section">
+            <div class="container">
+                <div class="calendar__head">
+                    <div>
+                        <div class="hero__badge">LEGENDS & SEASONS · RCS F1</div>
+                        <h1 class="section-title">ЗАЛ <span>СЛАВЫ</span></h1>
+                        <p class="calendar__sub">
+                            Коллекционные карточки пилотов и статистика по сезонам чемпионата Racing Series
+                            Championship.
+                        </p>
+                    </div>
+
+                    <!-- Кнопки сезонов рендерятся автоматически из таблицы -->
+                    <div class="calendar__filters" id="hofSeasonFilters">
+                        <button class="filter-btn is-active" data-season="all">Все сезоны</button>
+                    </div>
+                </div>
+
+                <div class="hof-grid" id="hofFullGrid"></div>
+            </div>
+        </section>
+
+        <section class="discord-cta">
+            <div class="container">
+                <div class="discord-cta__box">
+                    <div>
+                        <h2>Хочешь попасть в Зал славы следующего сезона?</h2>
+                        <p>Регистрируйся на этапы в Discord, забирай поулы, подиумы и победы в гонках RCS F1.</p>
+                    </div>
+                    <a href="https://discord.com" target="_blank" rel="noopener" class="btn btn--white">
+                        Перейти в Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <a href="/index.html" class="logo">
+                    <span class="logo__badge">AC</span>
+                    <span class="logo__text">RCS <span>F1</span></span>
+                </a>
+                <p>Независимая сим-рейсинг лига в Assetto Corsa. Честная борьба на трассе каждый уик-энд.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Чемпионат</h4>
+                <a href="/index.html#calendar">Календарь 2026</a>
+                <a href="standings.html">Таблица чемпионата</a>
+                <a href="hall-of-fame.html">Зал славы</a>
+                <a href="rules.html">Регламент и моды</a>
+            </div>
+            <div class="footer__links">
+                <h4>Сообщество</h4>
+                <a href="https://discord.com" target="_blank" rel="noopener">Discord сервер</a>
+                <a href="live.html">Live тайминг</a>
+            </div>
+        </div>
+        <div class="container footer__bottom">
+            <span>© 2026 Racing Series Championship F1. Not affiliated with Kunos Simulazioni.</span>
+        </div>
+    </footer>
+</body>
+
+</html>

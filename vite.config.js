@@ -11,6 +11,7 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         standings: resolve(__dirname, "standings.html"),
         rules: resolve(__dirname, "rules.html"),
+        hallOfFame: resolve(__dirname, 'hall-of-fame.html'),
         live: resolve(__dirname, "live.html"),
       },
     },
