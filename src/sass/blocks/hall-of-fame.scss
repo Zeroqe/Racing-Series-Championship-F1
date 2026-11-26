@@ -13,43 +13,67 @@
 }
 
 .hof-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #16181f 0%, #0f1116 100%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    overflow: hidden;
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
 
     &:hover {
-        transform: translateY(-6px);
         border-color: rgba(225, 6, 0, 0.55);
-        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 22px 45px rgba(0, 0, 0, 0.65), 0 0 24px rgba(225, 6, 0, 0.22);
     }
 
     &.is-champion {
         border-color: rgba(245, 197, 66, 0.45);
+
+        &:hover {
+            border-color: rgba(245, 197, 66, 0.8);
+            box-shadow: 0 22px 45px rgba(0, 0, 0, 0.65), 0 0 28px rgba(245, 197, 66, 0.3);
+        }
     }
 
     &__poster {
         position: relative;
         aspect-ratio: 3 / 4;
         background: #0b0c10;
+        border-radius: 15px 15px 0 0;
         overflow: hidden;
+        transform-style: preserve-3d;
+        will-change: transform;
+        cursor: grab;
+
+        &:hover {
+            border-radius: 15px;
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.8);
+        }
 
         img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+            will-change: transform;
         }
+    }
+
+    &__glare {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        mix-blend-mode: screen;
+        z-index: 2;
     }
 
     &__crown {
         position: absolute;
         top: 10px;
         left: 10px;
-        z-index: 2;
+        z-index: 3;
         padding: 4px 10px;
         border-radius: 999px;
         background: rgba(15, 17, 22, 0.86);
@@ -59,6 +83,7 @@
         font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
+        pointer-events: none;
     }
 
     &__body {
@@ -104,19 +129,21 @@
         border-radius: 10px;
         overflow: hidden;
     }
+
     &__season {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 2;
-    padding: 4px 9px;
-    border-radius: 6px;
-    background: rgba(15, 17, 22, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
+        padding: 4px 9px;
+        border-radius: 6px;
+        background: rgba(15, 17, 22, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        pointer-events: none;
     }
 }
 

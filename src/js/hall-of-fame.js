@@ -60,7 +60,6 @@ function resolveCardImage(img) {
   const val = String(img || '').trim();
   if (!val) return '/cards/placeholder.jpg';
 
-  // Превращаем обычную ссылку Google Диска в прямую ссылку на изображение
   if (val.includes('drive.google.com')) {
     const match = val.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || val.match(/[?&]id=([a-zA-Z0-9_-]+)/);
     if (match && match[1]) {
@@ -78,7 +77,6 @@ function resolveCardImage(img) {
 function normalizeHallOfFame(rows) {
   if (!Array.isArray(rows) || rows.length === 0) return [];
 
-  // Защита: если Google gviz вернул лист Settings, не рисуем его как карточки
   const looksLikeSettings = rows.some((r) => {
     const raw = JSON.stringify(r).toLowerCase();
     return (
@@ -115,6 +113,61 @@ function normalizeHallOfFame(rows) {
     .sort((a, b) => Number(b.season) - Number(a.season) || a.order - b.order);
 }
 
+function initPosterInspect(container) {
+  if (!container) return;
+
+  container.querySelectorAll('.hof-card__poster').forEach((poster) => {
+    const card = poster.closest('.hof-card');
+    const img = poster.querySelector('img');
+    const glare = poster.querySelector('.hof-card__glare');
+
+    poster.addEventListener('mousemove', (e) => {
+      const rect = poster.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const px = x / rect.width;
+      const py = y / rect.height;
+
+      const rotateY = (px - 0.5) * 22;
+      const rotateX = (0.5 - py) * 22;
+
+      if (card) card.style.zIndex = '5';
+
+      poster.style.transition = 'transform 0.08s ease-out, box-shadow 0.2s ease';
+      poster.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.06, 1.06, 1.06)`;
+      poster.style.zIndex = '6';
+
+      if (img) {
+        img.style.transition = 'transform 0.08s ease-out';
+        img.style.transform = `scale(1.08) translate(${((0.5 - px) * 10).toFixed(1)}px, ${((0.5 - py) * 10).toFixed(1)}px)`;
+      }
+
+      if (glare) {
+        glare.style.opacity = '1';
+        glare.style.background = `radial-gradient(circle at ${(px * 100).toFixed(1)}% ${(py * 100).toFixed(1)}%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.07) 40%, transparent 72%)`;
+      }
+    });
+
+    poster.addEventListener('mouseleave', () => {
+      if (card) card.style.zIndex = '';
+
+      poster.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease';
+      poster.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      poster.style.zIndex = '';
+
+      if (img) {
+        img.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+        img.style.transform = 'scale(1) translate(0px, 0px)';
+      }
+
+      if (glare) {
+        glare.style.opacity = '0';
+      }
+    });
+  });
+}
+
 function renderCards(container, list) {
   if (!container) return;
 
@@ -134,6 +187,7 @@ function renderCards(container, list) {
             <span class="hof-card__season">SEASON ${p.season}</span>
             ${hasTitle ? `<span class="hof-card__crown">🏆 ${badgeText}</span>` : ''}
             <img src="${resolveCardImage(p.image)}" alt="${p.driver}" loading="lazy" />
+            <span class="hof-card__glare"></span>
           </div>
 
           <div class="hof-card__body">
@@ -164,6 +218,8 @@ function renderCards(container, list) {
       `;
     })
     .join('');
+
+  initPosterInspect(container);
 }
 
 function buildSeasonFilters(filtersEl, allItems, onSelect) {
