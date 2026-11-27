@@ -5,6 +5,7 @@ const FALLBACK_HOF = [
   {
     season: '2018',
     driver: 'Kimi Raikkonen',
+    nickname: '',
     team: 'Scuderia Ferrari',
     number: '7',
     image: 'raikkonen.jpg',
@@ -18,6 +19,7 @@ const FALLBACK_HOF = [
   {
     season: '2018',
     driver: 'Valtteri Bottas',
+    nickname: '',
     team: 'Mercedes-AMG',
     number: '77',
     image: 'bottas.jpg',
@@ -31,6 +33,7 @@ const FALLBACK_HOF = [
   {
     season: '2018',
     driver: 'Daniel Ricciardo',
+    nickname: '',
     team: 'Red Bull Racing',
     number: '3',
     image: 'ricciardo.jpg',
@@ -44,6 +47,7 @@ const FALLBACK_HOF = [
   {
     season: '2012',
     driver: 'Lewis Hamilton',
+    nickname: '',
     team: 'Mercedes-AMG',
     number: '44',
     image: 'hamilton.jpg',
@@ -108,6 +112,7 @@ function normalizeHallOfFame(rows) {
         titles: Number(r.titles ?? c[8] ?? 0) || 0,
         titleNote: String(r.title_note ?? c[9] ?? '').trim(),
         order: Number(r.order ?? c[10] ?? idx + 1) || idx + 1,
+        nickname: String(r.nickname ?? r.nick ?? c[11] ?? '').trim(),
       };
     })
     .sort((a, b) => Number(b.season) - Number(a.season) || a.order - b.order);
@@ -328,6 +333,7 @@ function renderCards(container, list) {
             <div class="hof-card__head">
               <div>
                 <h3 class="hof-card__name">${p.driver}</h3>
+                ${p.nickname ? `<p class="hof-card__nick">${p.nickname}</p>` : ''}
                 <p class="hof-card__team">${p.team}</p>
               </div>
               ${p.number ? `<span class="hof-card__num">#${p.number}</span>` : ''}
