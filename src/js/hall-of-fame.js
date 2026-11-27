@@ -123,11 +123,8 @@ function initPosterInspect(container) {
 
     poster.addEventListener('mousemove', (e) => {
       const rect = poster.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const px = x / rect.width;
-      const py = y / rect.height;
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
 
       const rotateY = (px - 0.5) * 22;
       const rotateX = (0.5 - py) * 22;
@@ -168,6 +165,143 @@ function initPosterInspect(container) {
   });
 }
 
+function ensureCardModal() {
+  let modal = document.getElementById('hofModal');
+  if (modal) return modal;
+
+  modal = document.createElement('div');
+  modal.id = 'hofModal';
+  modal.className = 'hof-modal';
+  modal.setAttribute('aria-hidden', 'true');
+  modal.innerHTML = `
+    <div class="hof-modal__backdrop" data-close-modal></div>
+    <div class="hof-modal__dialog" role="dialog" aria-modal="true">
+      <button class="hof-modal__close" type="button" aria-label="Закрыть" data-close-modal>✕</button>
+      <div class="hof-modal__stage" id="hofModalStage"></div>
+      <p class="hof-modal__hint">Води или зажми мышкой, чтобы осмотреть фотку • ESC — закрыть</p>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.querySelectorAll('[data-close-modal]').forEach((el) => {
+    el.addEventListener('click', closeCardModal);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeCardModal();
+    }
+  });
+
+  return modal;
+}
+
+function closeCardModal() {
+  const modal = document.getElementById('hofModal');
+  if (!modal) return;
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function bindModalPosterInspect(poster) {
+  if (!poster) return;
+  const glare = poster.querySelector('.hof-card__glare');
+  const img = poster.querySelector('img');
+
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+
+  const applyTilt = (rotateX, rotateY, px, py, scale = 1.04) => {
+    poster.style.transition = 'transform 0.08s ease-out, box-shadow 0.2s ease';
+    poster.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`;
+
+    if (img) {
+      img.style.transition = 'transform 0.08s ease-out';
+      img.style.transform = `scale(1.08) translate(${((0.5 - px) * 14).toFixed(1)}px, ${((0.5 - py) * 14).toFixed(1)}px)`;
+    }
+
+    if (glare) {
+      glare.style.opacity = '1';
+      glare.style.background = `radial-gradient(circle at ${(px * 100).toFixed(1)}% ${(py * 100).toFixed(1)}%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 42%, transparent 74%)`;
+    }
+  };
+
+  const resetTilt = () => {
+    poster.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease';
+    poster.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+
+    if (img) {
+      img.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)';
+      img.style.transform = 'scale(1) translate(0px, 0px)';
+    }
+
+    if (glare) {
+      glare.style.opacity = '0';
+    }
+  };
+
+  poster.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    poster.setPointerCapture?.(e.pointerId);
+  });
+
+  poster.addEventListener('pointermove', (e) => {
+    const rect = poster.getBoundingClientRect();
+    const px = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    const py = Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height));
+
+    if (isDragging) {
+      const dx = Math.max(-1, Math.min(1, (e.clientX - startX) / (rect.width * 0.6)));
+      const dy = Math.max(-1, Math.min(1, (e.clientY - startY) / (rect.height * 0.6)));
+      applyTilt(-dy * 26, dx * 26, px, py, 1.06);
+    } else if (e.pointerType === 'mouse') {
+      const rotateY = (px - 0.5) * 26;
+      const rotateX = (0.5 - py) * 26;
+      applyTilt(rotateX, rotateY, px, py, 1.04);
+    }
+  });
+
+  const endDrag = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    resetTilt();
+  };
+
+  poster.addEventListener('pointerup', endDrag);
+  poster.addEventListener('pointercancel', endDrag);
+  poster.addEventListener('mouseleave', () => {
+    isDragging = false;
+    resetTilt();
+  });
+}
+
+function openCardModal(p) {
+  if (!p) return;
+  const modal = ensureCardModal();
+  const stage = modal.querySelector('#hofModalStage');
+  const hasTitle = p.titles > 0 || Boolean(p.titleNote);
+  const badgeText = p.titleNote || (p.titles > 0 ? `×${p.titles} CHAMPION` : '');
+
+  stage.innerHTML = `
+    <div class="hof-poster-modal ${hasTitle ? 'is-champion' : ''}">
+      <span class="hof-card__season">SEASON ${p.season}</span>
+      ${hasTitle ? `<span class="hof-card__crown">🏆 ${badgeText}</span>` : ''}
+      <img src="${resolveCardImage(p.image)}" alt="${p.driver}" />
+      <span class="hof-card__glare"></span>
+    </div>
+  `;
+
+  bindModalPosterInspect(stage.querySelector('.hof-poster-modal'));
+
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
 function renderCards(container, list) {
   if (!container) return;
 
@@ -177,13 +311,13 @@ function renderCards(container, list) {
   }
 
   container.innerHTML = list
-    .map((p) => {
+    .map((p, idx) => {
       const hasTitle = p.titles > 0 || Boolean(p.titleNote);
       const badgeText = p.titleNote || (p.titles > 0 ? `×${p.titles} CHAMPION` : '');
 
       return `
-        <article class="hof-card ${hasTitle ? 'is-champion' : ''}">
-          <div class="hof-card__poster">
+        <article class="hof-card ${hasTitle ? 'is-champion' : ''}" data-card-index="${idx}">
+          <div class="hof-card__poster" title="Нажми, чтобы осмотреть фотку">
             <span class="hof-card__season">SEASON ${p.season}</span>
             ${hasTitle ? `<span class="hof-card__crown">🏆 ${badgeText}</span>` : ''}
             <img src="${resolveCardImage(p.image)}" alt="${p.driver}" loading="lazy" />
@@ -220,6 +354,16 @@ function renderCards(container, list) {
     .join('');
 
   initPosterInspect(container);
+
+  container.querySelectorAll('.hof-card__poster').forEach((posterEl) => {
+    posterEl.addEventListener('click', () => {
+      const cardEl = posterEl.closest('.hof-card');
+      const idx = Number(cardEl?.dataset.cardIndex);
+      if (!Number.isNaN(idx) && list[idx]) {
+        openCardModal(list[idx]);
+      }
+    });
+  });
 }
 
 function buildSeasonFilters(filtersEl, allItems, onSelect) {

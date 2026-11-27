@@ -41,9 +41,9 @@
         background: #0b0c10;
         border-radius: 15px 15px 0 0;
         overflow: hidden;
+        cursor: pointer;
         transform-style: preserve-3d;
         will-change: transform;
-        cursor: grab;
 
         &:hover {
             border-radius: 15px;
@@ -56,6 +56,7 @@
             object-fit: cover;
             display: block;
             will-change: transform;
+            pointer-events: none;
         }
     }
 
@@ -171,5 +172,115 @@
         font-weight: 700;
         letter-spacing: 0.06em;
         color: rgba(255, 255, 255, 0.55);
+    }
+}
+
+.hof-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+
+    &.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        .hof-modal__dialog {
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(6, 7, 11, 0.86);
+        backdrop-filter: blur(10px);
+    }
+
+    &__dialog {
+        position: relative;
+        z-index: 1;
+        width: min(410px, 88vw);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        transform: translateY(14px) scale(0.96);
+        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    &__close {
+        align-self: flex-end;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(20, 22, 29, 0.9);
+        color: #ffffff;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+        &:hover {
+            border-color: #e10600;
+            background: #e10600;
+            transform: scale(1.06);
+        }
+    }
+
+    &__stage {
+        width: 100%;
+    }
+
+    &__hint {
+        margin: 0;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+    }
+}
+
+.hof-poster-modal {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #0b0c10;
+    border-radius: 18px;
+    border: 1px solid rgba(225, 6, 0, 0.55);
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transform-style: preserve-3d;
+    will-change: transform;
+    box-shadow: 0 28px 65px rgba(0, 0, 0, 0.85), 0 0 32px rgba(225, 6, 0, 0.28);
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    &.is-champion {
+        border-color: rgba(245, 197, 66, 0.7);
+        box-shadow: 0 28px 65px rgba(0, 0, 0, 0.85), 0 0 36px rgba(245, 197, 66, 0.35);
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        will-change: transform;
+        pointer-events: none;
     }
 }
